@@ -8,8 +8,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class PacketCEScoreboardObjective extends DefinedPacket
-{
+public class PacketCEScoreboardObjective extends DefinedPacket {
 
     private String name;
     private String text;
@@ -18,13 +17,11 @@ public class PacketCEScoreboardObjective extends DefinedPacket
      */
     private byte action;
 
-    private PacketCEScoreboardObjective()
-    {
-        super( 0xCE );
+    private PacketCEScoreboardObjective() {
+        super(0xCE);
     }
 
-    public PacketCEScoreboardObjective(String name, String text, byte action)
-    {
+    public PacketCEScoreboardObjective(String name, String text, byte action) {
         this();
         this.name = name;
         this.text = text;
@@ -32,24 +29,21 @@ public class PacketCEScoreboardObjective extends DefinedPacket
     }
 
     @Override
-    public void read(ByteBuf buf)
-    {
-        name = readString( buf );
-        text = readString( buf );
+    public void read(ByteBuf buf) {
+        name = readString(buf);
+        text = readString(buf);
         action = buf.readByte();
     }
 
     @Override
-    public void write(ByteBuf buf)
-    {
-        writeString( name, buf );
-        writeString( text, buf );
-        buf.writeByte( action );
+    public void write(ByteBuf buf) {
+        writeString(name, buf);
+        writeString(text, buf);
+        buf.writeByte(action);
     }
 
     @Override
-    public void handle(AbstractPacketHandler handler) throws Exception
-    {
-        handler.handle( this );
+    public void handle(AbstractPacketHandler handler) throws Exception {
+        handler.handle(this);
     }
 }

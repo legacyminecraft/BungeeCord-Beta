@@ -4,51 +4,43 @@ import io.netty.buffer.ByteBuf;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public abstract class DefinedPacket
-{
+public abstract class DefinedPacket {
 
     private final int id;
 
-    public final int getId()
-    {
+    public final int getId() {
         return id;
     }
 
-    public void writeString(String s, ByteBuf buf)
-    {
+    public void writeString(String s, ByteBuf buf) {
         // TODO: Check len - use Guava?
-        buf.writeShort( s.length() );
-        for ( char c : s.toCharArray() )
-        {
-            buf.writeChar( c );
+        buf.writeShort(s.length());
+        for (char c : s.toCharArray()) {
+            buf.writeChar(c);
         }
     }
 
-    public String readString(ByteBuf buf)
-    {
+    public String readString(ByteBuf buf) {
         // TODO: Check len - use Guava?
         short len = buf.readShort();
-        char[] chars = new char[ len ];
-        for ( int i = 0; i < len; i++ )
-        {
+        char[] chars = new char[len];
+        for (int i = 0; i < len; i++) {
             chars[i] = buf.readChar();
         }
-        return new String( chars );
+        return new String(chars);
     }
 
-    public void writeArray(byte[] b, ByteBuf buf)
-    {
+    public void writeArray(byte[] b, ByteBuf buf) {
         // TODO: Check len - use Guava?
-        buf.writeShort( b.length );
-        buf.writeBytes( b );
+        buf.writeShort(b.length);
+        buf.writeBytes(b);
     }
 
-    public byte[] readArray(ByteBuf buf)
-    {
+    public byte[] readArray(ByteBuf buf) {
         // TODO: Check len - use Guava?
         short len = buf.readShort();
-        byte[] ret = new byte[ len ];
-        buf.readBytes( ret );
+        byte[] ret = new byte[len];
+        buf.readBytes(ret);
         return ret;
     }
 

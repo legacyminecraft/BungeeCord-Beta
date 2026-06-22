@@ -8,8 +8,7 @@ import net.md_5.bungee.api.tab.TabListHandler;
  * Represents a player who's connection is being connected to somewhere else,
  * whether it be a remote or embedded server.
  */
-public interface ProxiedPlayer extends Connection, CommandSender
-{
+public interface ProxiedPlayer extends Connection, CommandSender {
 
     /**
      * Gets this player's display name.

@@ -1,11 +1,12 @@
 package net.md_5.bungee.api.plugin;
 
-import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * POJO representing the plugin.yml file.
@@ -13,8 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PluginDescription
-{
+public class PluginDescription {
 
     /**
      * Friendly name of the plugin.

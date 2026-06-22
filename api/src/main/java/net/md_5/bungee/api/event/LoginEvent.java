@@ -13,8 +13,7 @@ import net.md_5.bungee.api.plugin.Cancellable;
 @Data
 @ToString(callSuper = false)
 @EqualsAndHashCode(callSuper = false)
-public class LoginEvent extends AsyncEvent<LoginEvent> implements Cancellable
-{
+public class LoginEvent extends AsyncEvent<LoginEvent> implements Cancellable {
 
     /**
      * Cancelled state.
@@ -29,9 +28,8 @@ public class LoginEvent extends AsyncEvent<LoginEvent> implements Cancellable
      */
     private final PendingConnection connection;
 
-    public LoginEvent(PendingConnection connection, Callback<LoginEvent> done)
-    {
-        super( done );
+    public LoginEvent(PendingConnection connection, Callback<LoginEvent> done) {
+        super(done);
         this.connection = connection;
     }
 }

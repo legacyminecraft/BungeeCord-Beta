@@ -5,8 +5,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 /**
  * Represents a destination which this proxy might connect to.
  */
-public interface Server extends Connection
-{
+public interface Server extends Connection {
 
     /**
      * Returns the basic information about this server.

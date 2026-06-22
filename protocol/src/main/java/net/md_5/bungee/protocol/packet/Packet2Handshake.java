@@ -10,40 +10,35 @@ import lombok.ToString;
 @Setter
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class Packet2Handshake extends DefinedPacket
-{
+public class Packet2Handshake extends DefinedPacket {
 
     private byte protocolVersion;
     private String username;
     private String host;
     private int port;
 
-    private Packet2Handshake()
-    {
-        super( 0x02 );
+    private Packet2Handshake() {
+        super(0x02);
     }
 
     @Override
-    public void read(ByteBuf buf)
-    {
+    public void read(ByteBuf buf) {
         protocolVersion = buf.readByte();
-        username = readString( buf );
-        host = readString( buf );
+        username = readString(buf);
+        host = readString(buf);
         port = buf.readInt();
     }
 
     @Override
-    public void write(ByteBuf buf)
-    {
-        buf.writeByte( protocolVersion );
-        writeString( username, buf );
-        writeString( host, buf );
-        buf.writeInt( port );
+    public void write(ByteBuf buf) {
+        buf.writeByte(protocolVersion);
+        writeString(username, buf);
+        writeString(host, buf);
+        buf.writeInt(port);
     }
 
     @Override
-    public void handle(AbstractPacketHandler handler) throws Exception
-    {
-        handler.handle( this );
+    public void handle(AbstractPacketHandler handler) throws Exception {
+        handler.handle(this);
     }
 }

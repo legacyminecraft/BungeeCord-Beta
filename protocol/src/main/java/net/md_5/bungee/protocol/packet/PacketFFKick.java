@@ -8,37 +8,31 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class PacketFFKick extends DefinedPacket
-{
+public class PacketFFKick extends DefinedPacket {
 
     private String message;
 
-    private PacketFFKick()
-    {
-        super( 0xFF );
+    private PacketFFKick() {
+        super(0xFF);
     }
 
-    public PacketFFKick(String message)
-    {
+    public PacketFFKick(String message) {
         this();
         this.message = message;
     }
 
     @Override
-    public void read(ByteBuf buf)
-    {
-        message = readString( buf );
+    public void read(ByteBuf buf) {
+        message = readString(buf);
     }
 
     @Override
-    public void write(ByteBuf buf)
-    {
-        writeString( message, buf );
+    public void write(ByteBuf buf) {
+        writeString(message, buf);
     }
 
     @Override
-    public void handle(AbstractPacketHandler handler) throws Exception
-    {
-        handler.handle( this );
+    public void handle(AbstractPacketHandler handler) throws Exception {
+        handler.handle(this);
     }
 }

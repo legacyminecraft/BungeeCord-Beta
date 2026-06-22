@@ -1,18 +1,18 @@
 package net.md_5.bungee.api.plugin;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.logging.Logger;
 import lombok.Getter;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ConfigurationAdapter;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.logging.Logger;
 
 /**
  * Represents any Plugin that may be loaded at runtime to enhance existing
  * functionality.
  */
-public class Plugin
-{
+public class Plugin {
 
     @Getter
     private PluginDescription description;
@@ -28,22 +28,19 @@ public class Plugin
      * be initialized, so only use it for registering
      * {@link ConfigurationAdapter}'s and other predefined behavior.
      */
-    public void onLoad()
-    {
+    public void onLoad() {
     }
 
     /**
      * Called when this plugin is enabled.
      */
-    public void onEnable()
-    {
+    public void onEnable() {
     }
 
     /**
      * Called when this plugin is disabled.
      */
-    public void onDisable()
-    {
+    public void onDisable() {
     }
 
     /**
@@ -52,9 +49,8 @@ public class Plugin
      *
      * @return the data folder of this plugin
      */
-    public final File getDataFolder()
-    {
-        return new File( getProxy().getPluginsFolder(), getDescription().getName() );
+    public final File getDataFolder() {
+        return new File(getProxy().getPluginsFolder(), getDescription().getName());
     }
 
     /**
@@ -65,9 +61,8 @@ public class Plugin
      * @return the stream for getting this resource, or null if it does not
      * exist
      */
-    public final InputStream getResourceAsStream(String name)
-    {
-        return getClass().getClassLoader().getResourceAsStream( name );
+    public final InputStream getResourceAsStream(String name) {
+        return getClass().getClassLoader().getResourceAsStream(name);
     }
 
     /**
@@ -76,11 +71,10 @@ public class Plugin
      * @param description the description that describes this plugin
      * @param jarfile this plugins jar or container
      */
-    final void init(ProxyServer proxy, PluginDescription description)
-    {
+    final void init(ProxyServer proxy, PluginDescription description) {
         this.proxy = proxy;
         this.description = description;
         this.file = description.getFile();
-        this.logger = new PluginLogger( this );
+        this.logger = new PluginLogger(this);
     }
 }

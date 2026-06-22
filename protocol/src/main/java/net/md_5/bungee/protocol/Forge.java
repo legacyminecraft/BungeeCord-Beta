@@ -6,26 +6,22 @@ import net.md_5.bungee.protocol.packet.DefinedPacket;
 import net.md_5.bungee.protocol.packet.forge.Forge1Login;
 import net.md_5.bungee.protocol.skip.PacketReader;
 
-public class Forge extends Vanilla
-{
+public class Forge extends Vanilla {
 
     @Getter
     private static final Forge instance = new Forge();
 
-    public Forge()
-    {
+    public Forge() {
         classes[0x01] = Forge1Login.class;
-        skipper = new PacketReader( this ); // TODO: :(
+        skipper = new PacketReader(this); // TODO: :(
     }
 
     @Override
-    public DefinedPacket read(short packetId, ByteBuf buf)
-    {
+    public DefinedPacket read(short packetId, ByteBuf buf) {
         int start = buf.readerIndex();
-        DefinedPacket packet = read( packetId, buf, this );
-        if ( buf.readerIndex() == start )
-        {
-            packet = super.read( packetId, buf );
+        DefinedPacket packet = read(packetId, buf, this);
+        if (buf.readerIndex() == start) {
+            packet = super.read(packetId, buf);
         }
 
         return packet;

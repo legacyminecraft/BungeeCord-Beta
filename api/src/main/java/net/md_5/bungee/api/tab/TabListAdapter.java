@@ -5,35 +5,29 @@ import lombok.NoArgsConstructor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 @NoArgsConstructor
-public abstract class TabListAdapter implements TabListHandler
-{
+public abstract class TabListAdapter implements TabListHandler {
 
     @Getter
     private ProxiedPlayer player;
 
     @Override
-    public void init(ProxiedPlayer player)
-    {
+    public void init(ProxiedPlayer player) {
         this.player = player;
     }
 
     @Override
-    public void onConnect()
-    {
+    public void onConnect() {
     }
 
     @Override
-    public void onDisconnect()
-    {
+    public void onDisconnect() {
     }
 
     @Override
-    public void onServerChange()
-    {
+    public void onServerChange() {
     }
 
     @Override
-    public void onPingChange(int ping)
-    {
+    public void onPingChange(int ping) {
     }
 }

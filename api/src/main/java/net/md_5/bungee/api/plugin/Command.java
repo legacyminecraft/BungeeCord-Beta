@@ -11,8 +11,7 @@ import net.md_5.bungee.api.CommandSender;
  */
 @Data
 @RequiredArgsConstructor(access = AccessLevel.NONE)
-public abstract class Command
-{
+public abstract class Command {
 
     private final String name;
     private final String permission;
@@ -23,9 +22,8 @@ public abstract class Command
      *
      * @param name the name of this command
      */
-    public Command(String name)
-    {
-        this( name, null );
+    public Command(String name) {
+        this(name, null);
     }
 
     /**
@@ -36,9 +34,8 @@ public abstract class Command
      * null or empty string allows it to be executed by everyone
      * @param aliases aliases which map back to this command
      */
-    public Command(String name, String permission, String... aliases)
-    {
-        Preconditions.checkArgument( name != null, "name" );
+    public Command(String name, String permission, String... aliases) {
+        Preconditions.checkArgument(name != null, "name");
         this.name = name;
         this.permission = permission;
         this.aliases = aliases;

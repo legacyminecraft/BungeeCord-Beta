@@ -9,17 +9,10 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.internal.PlatformDependent;
-import java.net.InetSocketAddress;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.logging.Level;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -39,9 +32,15 @@ import net.md_5.bungee.protocol.packet.PacketFAPluginMessage;
 import net.md_5.bungee.protocol.packet.PacketFFKick;
 import net.md_5.bungee.util.CaseInsensitiveSet;
 
+import java.net.InetSocketAddress;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.logging.Level;
+
 @RequiredArgsConstructor
-public final class UserConnection implements ProxiedPlayer
-{
+public final class UserConnection implements ProxiedPlayer {
 
     /*========================================================================*/
     @NonNull
@@ -95,266 +94,217 @@ public final class UserConnection implements ProxiedPlayer
     @Getter
     private String displayName;
     /*========================================================================*/
-    private final Unsafe unsafe = new Unsafe()
-    {
+    private final Unsafe unsafe = new Unsafe() {
         @Override
-        public void sendPacket(DefinedPacket packet)
-        {
-            ch.write( packet );
+        public void sendPacket(DefinedPacket packet) {
+            ch.write(packet);
         }
     };
 
-    public void init()
-    {
+    public void init() {
         this.displayName = name;
-        try
-        {
+        try {
             this.tabList = getPendingConnection().getListener().getTabList().getDeclaredConstructor().newInstance();
-        } catch ( ReflectiveOperationException ex )
-        {
-            throw new RuntimeException( ex );
+        } catch (ReflectiveOperationException ex) {
+            throw new RuntimeException(ex);
         }
-        this.tabList.init( this );
+        this.tabList.init(this);
 
-        Collection<String> g = bungee.getConfigurationAdapter().getGroups( name );
-        for ( String s : g )
-        {
-            addGroups( s );
+        Collection<String> g = bungee.getConfigurationAdapter().getGroups(name);
+        for (String s : g) {
+            addGroups(s);
         }
     }
 
     @Override
-    public void setTabList(TabListHandler tabList)
-    {
-        tabList.init( this );
+    public void setTabList(TabListHandler tabList) {
+        tabList.init(this);
         this.tabList = tabList;
     }
 
-    public void sendPacket(PacketWrapper packet)
-    {
-        ch.write( packet );
+    public void sendPacket(PacketWrapper packet) {
+        ch.write(packet);
     }
 
     @Deprecated
-    public boolean isActive()
-    {
+    public boolean isActive() {
         return !ch.isClosed();
     }
 
     @Override
-    public void setDisplayName(String name)
-    {
-        Preconditions.checkNotNull( name, "displayName" );
-        Preconditions.checkArgument( name.length() <= 16, "Display name cannot be longer than 16 characters" );
+    public void setDisplayName(String name) {
+        Preconditions.checkNotNull(name, "displayName");
+        Preconditions.checkArgument(name.length() <= 16, "Display name cannot be longer than 16 characters");
         getTabList().onDisconnect();
         displayName = name;
         getTabList().onConnect();
     }
 
     @Override
-    public void connect(ServerInfo target)
-    {
-        connect( target, false );
+    public void connect(ServerInfo target) {
+        connect(target, false);
     }
 
-    void sendDimensionSwitch()
-    {
-        unsafe().sendPacket( PacketConstants.DIM1_SWITCH );
-        unsafe().sendPacket( PacketConstants.DIM2_SWITCH );
+    void sendDimensionSwitch() {
+        unsafe().sendPacket(PacketConstants.DIM1_SWITCH);
+        unsafe().sendPacket(PacketConstants.DIM2_SWITCH);
     }
 
-    public void connectNow(ServerInfo target)
-    {
+    public void connectNow(ServerInfo target) {
         sendDimensionSwitch();
-        connect( target );
+        connect(target);
     }
 
-    public void connect(ServerInfo info, final boolean retry)
-    {
-        Preconditions.checkNotNull( info, "info" );
+    public void connect(ServerInfo info, final boolean retry) {
+        Preconditions.checkNotNull(info, "info");
 
-        ServerConnectEvent event = new ServerConnectEvent( this, info );
-        if ( bungee.getPluginManager().callEvent( event ).isCancelled() )
-        {
+        ServerConnectEvent event = new ServerConnectEvent(this, info);
+        if (bungee.getPluginManager().callEvent(event).isCancelled()) {
             return;
         }
 
         final BungeeServerInfo target = (BungeeServerInfo) event.getTarget(); // Update in case the event changed target
 
-        if ( getServer() != null && Objects.equals( getServer().getInfo(), target ) )
-        {
-            sendMessage( bungee.getTranslation( "already_connected" ) );
+        if (getServer() != null && Objects.equals(getServer().getInfo(), target)) {
+            sendMessage(bungee.getTranslation("already_connected"));
             return;
         }
-        if ( pendingConnects.contains( target ) )
-        {
-            sendMessage( bungee.getTranslation( "already_connecting" ) );
+        if (pendingConnects.contains(target)) {
+            sendMessage(bungee.getTranslation("already_connecting"));
             return;
         }
 
-        pendingConnects.add( target );
+        pendingConnects.add(target);
 
-        ChannelInitializer initializer = new ChannelInitializer()
-        {
+        ChannelInitializer initializer = new ChannelInitializer() {
             @Override
-            protected void initChannel(Channel ch) throws Exception
-            {
-                PipelineUtils.BASE.initChannel( ch );
-                ch.pipeline().get( HandlerBoss.class ).setHandler( new ServerConnector( bungee, UserConnection.this, target ) );
+            protected void initChannel(Channel ch) throws Exception {
+                PipelineUtils.BASE.initChannel(ch);
+                ch.pipeline().get(HandlerBoss.class).setHandler(new ServerConnector(bungee, UserConnection.this, target));
             }
         };
-        ChannelFutureListener listener = new ChannelFutureListener()
-        {
+        ChannelFutureListener listener = new ChannelFutureListener() {
             @Override
-            public void operationComplete(ChannelFuture future) throws Exception
-            {
-                if ( !future.isSuccess() )
-                {
+            public void operationComplete(ChannelFuture future) throws Exception {
+                if (!future.isSuccess()) {
                     future.channel().close();
-                    pendingConnects.remove( target );
+                    pendingConnects.remove(target);
 
-                    ServerInfo def = ProxyServer.getInstance().getServers().get( getPendingConnection().getListener().getFallbackServer() );
-                    if ( retry && target != def && ( getServer() == null || def != getServer().getInfo() ) )
-                    {
-                        sendMessage( bungee.getTranslation( "fallback_lobby" ) );
-                        connect( def, false );
-                    } else
-                    {
-                        if ( server == null )
-                        {
-                            disconnect( bungee.getTranslation( "fallback_kick" ) + future.cause().getClass().getName() );
-                        } else
-                        {
-                            sendMessage( bungee.getTranslation( "fallback_kick" ) + future.cause().getClass().getName() );
+                    ServerInfo def = ProxyServer.getInstance().getServers().get(getPendingConnection().getListener().getFallbackServer());
+                    if (retry && target != def && (getServer() == null || def != getServer().getInfo())) {
+                        sendMessage(bungee.getTranslation("fallback_lobby"));
+                        connect(def, false);
+                    } else {
+                        if (server == null) {
+                            disconnect(bungee.getTranslation("fallback_kick") + future.cause().getClass().getName());
+                        } else {
+                            sendMessage(bungee.getTranslation("fallback_kick") + future.cause().getClass().getName());
                         }
                     }
                 }
             }
         };
         Bootstrap b = new Bootstrap()
-                .channel( NioSocketChannel.class )
-                .group( BungeeCord.getInstance().eventLoops )
-                .handler( initializer )
-                .option( ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000 ) // TODO: Configurable
-                .remoteAddress( target.getAddress() );
+                .channel(NioSocketChannel.class)
+                .group(BungeeCord.getInstance().eventLoops)
+                .handler(initializer)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000) // TODO: Configurable
+                .remoteAddress(target.getAddress());
         // Windows is bugged, multi homed users will just have to live with random connecting IPs
-        if ( getPendingConnection().getListener().isSetLocalAddress() && !PlatformDependent.isWindows() )
-        {
-            b.localAddress( getPendingConnection().getListener().getHost().getHostString(), 0 );
+        if (getPendingConnection().getListener().isSetLocalAddress() && !PlatformDependent.isWindows()) {
+            b.localAddress(getPendingConnection().getListener().getHost().getHostString(), 0);
         }
-        b.connect().addListener( listener );
+        b.connect().addListener(listener);
     }
 
     @Override
-    public synchronized void disconnect(String reason)
-    {
-        if ( ch.getHandle().isActive() )
-        {
-            bungee.getLogger().log( Level.INFO, "[" + getName() + "] disconnected with: " + reason );
-            unsafe().sendPacket( new PacketFFKick( reason ) );
+    public synchronized void disconnect(String reason) {
+        if (ch.getHandle().isActive()) {
+            bungee.getLogger().log(Level.INFO, "[" + getName() + "] disconnected with: " + reason);
+            unsafe().sendPacket(new PacketFFKick(reason));
             ch.close();
-            if ( server != null )
-            {
-                server.disconnect( "Quitting" );
+            if (server != null) {
+                server.disconnect("Quitting");
             }
         }
     }
 
     @Override
-    public void chat(String message)
-    {
-        Preconditions.checkState( server != null, "Not connected to server" );
-        server.getCh().write( new Packet3Chat( message ) );
+    public void chat(String message) {
+        Preconditions.checkState(server != null, "Not connected to server");
+        server.getCh().write(new Packet3Chat(message));
     }
 
     @Override
-    public void sendMessage(String message)
-    {
+    public void sendMessage(String message) {
         // TODO: Fix this
-        String encoded = BungeeCord.getInstance().gson.toJson( message );
-        unsafe().sendPacket( new Packet3Chat( "{\"text\":" + encoded + "}" ) );
+        String encoded = BungeeCord.getInstance().gson.toJson(message);
+        unsafe().sendPacket(new Packet3Chat("{\"text\":" + encoded + "}"));
     }
 
     @Override
-    public void sendMessages(String... messages)
-    {
-        for ( String message : messages )
-        {
-            sendMessage( message );
+    public void sendMessages(String... messages) {
+        for (String message : messages) {
+            sendMessage(message);
         }
     }
 
     @Override
-    public void sendData(String channel, byte[] data)
-    {
-        unsafe().sendPacket( new PacketFAPluginMessage( channel, data ) );
+    public void sendData(String channel, byte[] data) {
+        unsafe().sendPacket(new PacketFAPluginMessage(channel, data));
     }
 
     @Override
-    public InetSocketAddress getAddress()
-    {
+    public InetSocketAddress getAddress() {
         return (InetSocketAddress) ch.getHandle().remoteAddress();
     }
 
     @Override
-    public Collection<String> getGroups()
-    {
-        return Collections.unmodifiableCollection( groups );
+    public Collection<String> getGroups() {
+        return Collections.unmodifiableCollection(groups);
     }
 
     @Override
-    public void addGroups(String... groups)
-    {
-        for ( String group : groups )
-        {
-            this.groups.add( group );
-            for ( String permission : bungee.getConfigurationAdapter().getPermissions( group ) )
-            {
-                setPermission( permission, true );
+    public void addGroups(String... groups) {
+        for (String group : groups) {
+            this.groups.add(group);
+            for (String permission : bungee.getConfigurationAdapter().getPermissions(group)) {
+                setPermission(permission, true);
             }
         }
     }
 
     @Override
-    public void removeGroups(String... groups)
-    {
-        for ( String group : groups )
-        {
-            this.groups.remove( group );
-            for ( String permission : bungee.getConfigurationAdapter().getPermissions( group ) )
-            {
-                setPermission( permission, false );
+    public void removeGroups(String... groups) {
+        for (String group : groups) {
+            this.groups.remove(group);
+            for (String permission : bungee.getConfigurationAdapter().getPermissions(group)) {
+                setPermission(permission, false);
             }
         }
     }
 
     @Override
-    public boolean hasPermission(String permission)
-    {
-        return bungee.getPluginManager().callEvent( new PermissionCheckEvent( this, permission, permissions.contains( permission ) ) ).hasPermission();
+    public boolean hasPermission(String permission) {
+        return bungee.getPluginManager().callEvent(new PermissionCheckEvent(this, permission, permissions.contains(permission))).hasPermission();
     }
 
     @Override
-    public void setPermission(String permission, boolean value)
-    {
-        if ( value )
-        {
-            permissions.add( permission );
-        } else
-        {
-            permissions.remove( permission );
+    public void setPermission(String permission, boolean value) {
+        if (value) {
+            permissions.add(permission);
+        } else {
+            permissions.remove(permission);
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return name;
     }
 
     @Override
-    public Unsafe unsafe()
-    {
+    public Unsafe unsafe() {
         return unsafe;
     }
 }

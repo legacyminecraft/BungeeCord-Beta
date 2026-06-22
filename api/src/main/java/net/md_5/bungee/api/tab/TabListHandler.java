@@ -2,8 +2,7 @@ package net.md_5.bungee.api.tab;
 
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
-public interface TabListHandler
-{
+public interface TabListHandler {
 
     /**
      * Called so that this class may set member fields to keep track of its

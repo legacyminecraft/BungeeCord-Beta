@@ -7,8 +7,7 @@ import java.util.Map;
  * This class allows plugins to set their own configuration adapter to load
  * settings from a different place.
  */
-public interface ConfigurationAdapter
-{
+public interface ConfigurationAdapter {
 
     /**
      * Reload all the possible values, and if necessary cache them for

@@ -1,12 +1,12 @@
 package net.md_5.bungee.config;
 
-import java.util.List;
-import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class YamlConfigurationTest
-{
+import java.util.List;
+import java.util.Map;
+
+public class YamlConfigurationTest {
 
     private String docuement = ""
             + "receipt:     Oz-Ware Purchase Invoice\n"
@@ -43,19 +43,18 @@ public class YamlConfigurationTest
             + "    man behind the curtain.";
 
     @Test
-    public void testRead() throws Exception
-    {
-        Configuration conf = ConfigurationProvider.getProvider( YamlConfiguration.class ).load( docuement );
+    public void testRead() throws Exception {
+        Configuration conf = ConfigurationProvider.getProvider(YamlConfiguration.class).load(docuement);
 
-        Assert.assertEquals( "receipt", "Oz-Ware Purchase Invoice", conf.getString( "receipt" ) );
+        Assert.assertEquals("receipt", "Oz-Ware Purchase Invoice", conf.getString("receipt"));
         // Assert.assertEquals( "date", "2012-08-06", conf.get( "date" ).toString() );
 
-        Configuration customer = conf.getSection( "customer" );
-        Assert.assertEquals( "customer.given", "Dorothy", customer.getString( "given" ) );
-        Assert.assertEquals( "customer.given", "Dorothy", conf.getString( "customer.given" ) );
+        Configuration customer = conf.getSection("customer");
+        Assert.assertEquals("customer.given", "Dorothy", customer.getString("given"));
+        Assert.assertEquals("customer.given", "Dorothy", conf.getString("customer.given"));
 
-        List items = conf.getList( "items" );
-        Map item = (Map) items.get( 0 );
-        Assert.assertEquals( "items[0].part_no", "A4786", item.get( "part_no" ) );
+        List items = conf.getList("items");
+        Map item = (Map) items.get(0);
+        Assert.assertEquals("items[0].part_no", "A4786", item.get("part_no"));
     }
 }

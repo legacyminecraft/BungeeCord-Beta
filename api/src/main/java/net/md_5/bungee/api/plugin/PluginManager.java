@@ -4,6 +4,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.eventbus.Subscribe;
+import lombok.RequiredArgsConstructor;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.event.EventBus;
+import net.md_5.bungee.event.EventHandler;
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -21,23 +29,15 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
-import lombok.RequiredArgsConstructor;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.event.EventBus;
-import net.md_5.bungee.event.EventHandler;
-import org.yaml.snakeyaml.Yaml;
 
 /**
  * Class to manage bridging between plugin duties and implementation duties, for
  * example event handling and plugin management.
  */
 @RequiredArgsConstructor
-public class PluginManager
-{
+public class PluginManager {
 
-    private static final Pattern argsSplit = Pattern.compile( " " );
+    private static final Pattern argsSplit = Pattern.compile(" ");
     /*========================================================================*/
     private final ProxyServer proxy;
     /*========================================================================*/
@@ -50,10 +50,9 @@ public class PluginManager
     private Multimap<Plugin, Listener> listenersByPlugin = ArrayListMultimap.create();
 
     @SuppressWarnings("unchecked")
-    public PluginManager(ProxyServer proxy)
-    {
+    public PluginManager(ProxyServer proxy) {
         this.proxy = proxy;
-        eventBus = new EventBus( proxy.getLogger() );
+        eventBus = new EventBus(proxy.getLogger());
     }
 
     /**
@@ -62,14 +61,12 @@ public class PluginManager
      * @param plugin the plugin owning this command
      * @param command the command to register
      */
-    public void registerCommand(Plugin plugin, Command command)
-    {
-        commandMap.put( command.getName().toLowerCase(), command );
-        for ( String alias : command.getAliases() )
-        {
-            commandMap.put( alias.toLowerCase(), command );
+    public void registerCommand(Plugin plugin, Command command) {
+        commandMap.put(command.getName().toLowerCase(), command);
+        for (String alias : command.getAliases()) {
+            commandMap.put(alias.toLowerCase(), command);
         }
-        commandsByPlugin.put( plugin, command );
+        commandsByPlugin.put(plugin, command);
     }
 
     /**
@@ -77,10 +74,9 @@ public class PluginManager
      *
      * @param command the command to unregister
      */
-    public void unregisterCommand(Command command)
-    {
-        commandMap.values().remove( command );
-        commandsByPlugin.values().remove( command );
+    public void unregisterCommand(Command command) {
+        commandMap.values().remove(command);
+        commandsByPlugin.values().remove(command);
     }
 
     /**
@@ -88,18 +84,15 @@ public class PluginManager
      *
      * @param plugin the plugin to register the commands of
      */
-    public void unregisterCommands(Plugin plugin)
-    {
-        for ( Iterator<Command> it = commandsByPlugin.get( plugin ).iterator(); it.hasNext(); )
-        {
-            commandMap.values().remove( it.next() );
+    public void unregisterCommands(Plugin plugin) {
+        for (Iterator<Command> it = commandsByPlugin.get(plugin).iterator(); it.hasNext(); ) {
+            commandMap.values().remove(it.next());
             it.remove();
         }
     }
 
-    public boolean dispatchCommand(CommandSender sender, String commandLine)
-    {
-        return dispatchCommand( sender, commandLine, null );
+    public boolean dispatchCommand(CommandSender sender, String commandLine) {
+        return dispatchCommand(sender, commandLine, null);
     }
 
     /**
@@ -110,50 +103,40 @@ public class PluginManager
      * arguments
      * @return whether the command was handled
      */
-    public boolean dispatchCommand(CommandSender sender, String commandLine, List<String> tabResults)
-    {
-        String[] split = argsSplit.split( commandLine );
+    public boolean dispatchCommand(CommandSender sender, String commandLine, List<String> tabResults) {
+        String[] split = argsSplit.split(commandLine);
         // Check for chat that only contains " "
-        if ( split.length == 0 )
-        {
+        if (split.length == 0) {
             return false;
         }
 
         String commandName = split[0].toLowerCase();
-        if ( proxy.getDisabledCommands().contains( commandName ) )
-        {
+        if (proxy.getDisabledCommands().contains(commandName)) {
             return false;
         }
-        Command command = commandMap.get( commandName );
-        if ( command == null )
-        {
+        Command command = commandMap.get(commandName);
+        if (command == null) {
             return false;
         }
 
         String permission = command.getPermission();
-        if ( permission != null && !permission.isEmpty() && !sender.hasPermission( permission ) )
-        {
-            sender.sendMessage( proxy.getTranslation( "no_permission" ) );
+        if (permission != null && !permission.isEmpty() && !sender.hasPermission(permission)) {
+            sender.sendMessage(proxy.getTranslation("no_permission"));
             return true;
         }
 
-        String[] args = Arrays.copyOfRange( split, 1, split.length );
-        try
-        {
-            if ( tabResults == null )
-            {
-                command.execute( sender, args );
-            } else if ( command instanceof TabExecutor )
-            {
-                for ( String s : ( (TabExecutor) command ).onTabComplete( sender, args ) )
-                {
-                    tabResults.add( s );
+        String[] args = Arrays.copyOfRange(split, 1, split.length);
+        try {
+            if (tabResults == null) {
+                command.execute(sender, args);
+            } else if (command instanceof TabExecutor) {
+                for (String s : ((TabExecutor) command).onTabComplete(sender, args)) {
+                    tabResults.add(s);
                 }
             }
-        } catch ( Exception ex )
-        {
-            sender.sendMessage( ChatColor.RED + "An internal error occurred whilst executing this command, please check the console log for details." );
-            ProxyServer.getInstance().getLogger().log( Level.WARNING, "Error in dispatching command", ex );
+        } catch (Exception ex) {
+            sender.sendMessage(ChatColor.RED + "An internal error occurred whilst executing this command, please check the console log for details.");
+            ProxyServer.getInstance().getLogger().log(Level.WARNING, "Error in dispatching command", ex);
         }
         return true;
     }
@@ -163,8 +146,7 @@ public class PluginManager
      *
      * @return the set of loaded plugins
      */
-    public Collection<Plugin> getPlugins()
-    {
+    public Collection<Plugin> getPlugins() {
         return plugins.values();
     }
 
@@ -174,118 +156,99 @@ public class PluginManager
      * @param name of the plugin to retrieve
      * @return the retrieved plugin or null if not loaded
      */
-    public Plugin getPlugin(String name)
-    {
-        return plugins.get( name );
+    public Plugin getPlugin(String name) {
+        return plugins.get(name);
     }
 
-    public void loadAndEnablePlugins()
-    {
+    public void loadAndEnablePlugins() {
         Map<PluginDescription, Boolean> pluginStatuses = new HashMap<>();
-        for ( Map.Entry<String, PluginDescription> entry : toLoad.entrySet() )
-        {
+        for (Map.Entry<String, PluginDescription> entry : toLoad.entrySet()) {
             PluginDescription plugin = entry.getValue();
-            if ( !enablePlugin( pluginStatuses, new Stack<PluginDescription>(), plugin ) )
-            {
-                ProxyServer.getInstance().getLogger().warning( "Failed to enable " + entry.getKey() );
+            if (!enablePlugin(pluginStatuses, new Stack<PluginDescription>(), plugin)) {
+                ProxyServer.getInstance().getLogger().warning("Failed to enable " + entry.getKey());
             }
         }
         toLoad.clear();
         toLoad = null;
 
-        for ( Plugin plugin : plugins.values() )
-        {
-            try
-            {
+        for (Plugin plugin : plugins.values()) {
+            try {
                 plugin.onEnable();
-                ProxyServer.getInstance().getLogger().log( Level.INFO, "Enabled plugin {0} version {1} by {2}", new Object[]
-                {
-                    plugin.getDescription().getName(), plugin.getDescription().getVersion(), plugin.getDescription().getAuthor()
-                } );
-            } catch ( Throwable t )
-            {
-                ProxyServer.getInstance().getLogger().log( Level.WARNING, "Exception encountered when loading plugin: " + plugin.getDescription().getName(), t );
+                ProxyServer.getInstance().getLogger().log(Level.INFO, "Enabled plugin {0} version {1} by {2}", new Object[]
+                        {
+                                plugin.getDescription().getName(), plugin.getDescription().getVersion(), plugin.getDescription().getAuthor()
+                        });
+            } catch (Throwable t) {
+                ProxyServer.getInstance().getLogger().log(Level.WARNING, "Exception encountered when loading plugin: " + plugin.getDescription().getName(), t);
             }
         }
     }
 
-    private boolean enablePlugin(Map<PluginDescription, Boolean> pluginStatuses, Stack<PluginDescription> dependStack, PluginDescription plugin)
-    {
-        if ( pluginStatuses.containsKey( plugin ) )
-        {
-            return pluginStatuses.get( plugin );
+    private boolean enablePlugin(Map<PluginDescription, Boolean> pluginStatuses, Stack<PluginDescription> dependStack, PluginDescription plugin) {
+        if (pluginStatuses.containsKey(plugin)) {
+            return pluginStatuses.get(plugin);
         }
 
         // success status
         boolean status = true;
 
         // try to load dependencies first
-        for ( String dependName : plugin.getDepends() )
-        {
-            PluginDescription depend = toLoad.get( dependName );
-            Boolean dependStatus = ( depend != null ) ? pluginStatuses.get( depend ) : Boolean.FALSE;
+        for (String dependName : plugin.getDepends()) {
+            PluginDescription depend = toLoad.get(dependName);
+            Boolean dependStatus = (depend != null) ? pluginStatuses.get(depend) : Boolean.FALSE;
 
-            if ( dependStatus == null )
-            {
-                if ( dependStack.contains( depend ) )
-                {
+            if (dependStatus == null) {
+                if (dependStack.contains(depend)) {
                     StringBuilder dependencyGraph = new StringBuilder();
-                    for ( PluginDescription element : dependStack )
-                    {
-                        dependencyGraph.append( element.getName() ).append( " -> " );
+                    for (PluginDescription element : dependStack) {
+                        dependencyGraph.append(element.getName()).append(" -> ");
                     }
-                    dependencyGraph.append( plugin.getName() ).append( " -> " ).append( dependName );
-                    ProxyServer.getInstance().getLogger().log( Level.WARNING, "Circular dependency detected: " + dependencyGraph );
+                    dependencyGraph.append(plugin.getName()).append(" -> ").append(dependName);
+                    ProxyServer.getInstance().getLogger().log(Level.WARNING, "Circular dependency detected: " + dependencyGraph);
                     status = false;
-                } else
-                {
-                    dependStack.push( plugin );
-                    dependStatus = this.enablePlugin( pluginStatuses, dependStack, depend );
+                } else {
+                    dependStack.push(plugin);
+                    dependStatus = this.enablePlugin(pluginStatuses, dependStack, depend);
                     dependStack.pop();
                 }
             }
 
-            if ( dependStatus == Boolean.FALSE )
-            {
-                ProxyServer.getInstance().getLogger().log( Level.WARNING, "{0} (required by {1}) is unavailable", new Object[]
-                {
-                    String.valueOf( depend.getName() ), plugin.getName()
-                } );
+            if (dependStatus == Boolean.FALSE) {
+                ProxyServer.getInstance().getLogger().log(Level.WARNING, "{0} (required by {1}) is unavailable", new Object[]
+                        {
+                                String.valueOf(depend.getName()), plugin.getName()
+                        });
                 status = false;
             }
 
-            if ( !status )
-            {
+            if (!status) {
                 break;
             }
         }
 
         // do actual loading
-        if ( status )
-        {
-            try
-            {
-                URLClassLoader loader = new PluginClassloader( new URL[]
-                {
-                    plugin.getFile().toURI().toURL()
-                } );
-                Class<?> main = loader.loadClass( plugin.getMain() );
+        if (status) {
+            try {
+                URLClassLoader loader = new PluginClassloader(new URL[]
+                        {
+                                plugin.getFile().toURI().toURL()
+                        });
+                Class<?> main = loader.loadClass(plugin.getMain());
                 Plugin clazz = (Plugin) main.getDeclaredConstructor().newInstance();
 
-                clazz.init( proxy, plugin );
-                plugins.put( plugin.getName(), clazz );
+                clazz.init(proxy, plugin);
+                plugins.put(plugin.getName(), clazz);
                 clazz.onLoad();
-                ProxyServer.getInstance().getLogger().log( Level.INFO, "Loaded plugin {0} version {1} by {2}", new Object[]
-                {
-                    plugin.getName(), plugin.getVersion(), plugin.getAuthor()
-                } );
-            } catch ( Throwable t )
-            {
-                proxy.getLogger().log( Level.WARNING, "Error enabling plugin " + plugin.getName(), t );
+                ProxyServer.getInstance().getLogger().log(Level.INFO, "Loaded plugin {0} version {1} by {2}", new Object[]
+                        {
+                                plugin.getName(), plugin.getVersion(), plugin.getAuthor()
+                        });
+            } catch (Throwable t) {
+                proxy.getLogger().log(Level.WARNING, "Error enabling plugin " + plugin.getName(), t);
             }
         }
 
-        pluginStatuses.put( plugin, status );
+        pluginStatuses.put(plugin, status);
         return status;
     }
 
@@ -294,29 +257,23 @@ public class PluginManager
      *
      * @param folder the folder to search for plugins in
      */
-    public void detectPlugins(File folder)
-    {
-        Preconditions.checkNotNull( folder, "folder" );
-        Preconditions.checkArgument( folder.isDirectory(), "Must load from a directory" );
+    public void detectPlugins(File folder) {
+        Preconditions.checkNotNull(folder, "folder");
+        Preconditions.checkArgument(folder.isDirectory(), "Must load from a directory");
 
-        for ( File file : folder.listFiles() )
-        {
-            if ( file.isFile() && file.getName().endsWith( ".jar" ) )
-            {
-                try ( JarFile jar = new JarFile( file ) )
-                {
-                    JarEntry pdf = jar.getJarEntry( "plugin.yml" );
-                    Preconditions.checkNotNull( pdf, "Plugin must have a plugin.yml" );
+        for (File file : folder.listFiles()) {
+            if (file.isFile() && file.getName().endsWith(".jar")) {
+                try (JarFile jar = new JarFile(file)) {
+                    JarEntry pdf = jar.getJarEntry("plugin.yml");
+                    Preconditions.checkNotNull(pdf, "Plugin must have a plugin.yml");
 
-                    try ( InputStream in = jar.getInputStream( pdf ) )
-                    {
-                        PluginDescription desc = yaml.loadAs( in, PluginDescription.class );
-                        desc.setFile( file );
-                        toLoad.put( desc.getName(), desc );
+                    try (InputStream in = jar.getInputStream(pdf)) {
+                        PluginDescription desc = yaml.loadAs(in, PluginDescription.class);
+                        desc.setFile(file);
+                        toLoad.put(desc.getName(), desc);
                     }
-                } catch ( Exception ex )
-                {
-                    ProxyServer.getInstance().getLogger().log( Level.WARNING, "Could not load plugin from file " + file, ex );
+                } catch (Exception ex) {
+                    ProxyServer.getInstance().getLogger().log(Level.WARNING, "Could not load plugin from file " + file, ex);
                 }
             }
         }
@@ -330,21 +287,19 @@ public class PluginManager
      * @param event the event to call
      * @return the called event
      */
-    public <T extends Event> T callEvent(T event)
-    {
-        Preconditions.checkNotNull( event, "event" );
+    public <T extends Event> T callEvent(T event) {
+        Preconditions.checkNotNull(event, "event");
 
         long start = System.nanoTime();
-        eventBus.post( event );
+        eventBus.post(event);
         event.postCall();
 
         long elapsed = start - System.nanoTime();
-        if ( elapsed > 250000 )
-        {
-            ProxyServer.getInstance().getLogger().log( Level.WARNING, "Event {0} took more {1}ns to process!", new Object[]
-            {
-                event, elapsed
-            } );
+        if (elapsed > 250000) {
+            ProxyServer.getInstance().getLogger().log(Level.WARNING, "Event {0} took more {1}ns to process!", new Object[]
+                    {
+                            event, elapsed
+                    });
         }
         return event;
     }
@@ -357,15 +312,13 @@ public class PluginManager
      * @param plugin the owning plugin
      * @param listener the listener to register events for
      */
-    public void registerListener(Plugin plugin, Listener listener)
-    {
-        for ( Method method : listener.getClass().getDeclaredMethods() )
-        {
-            Preconditions.checkArgument( !method.isAnnotationPresent( Subscribe.class ),
-                    "Listener %s has registered using deprecated subscribe annotation! Please update to @EventHandler.", listener );
+    public void registerListener(Plugin plugin, Listener listener) {
+        for (Method method : listener.getClass().getDeclaredMethods()) {
+            Preconditions.checkArgument(!method.isAnnotationPresent(Subscribe.class),
+                    "Listener %s has registered using deprecated subscribe annotation! Please update to @EventHandler.", listener);
         }
-        eventBus.register( listener );
-        listenersByPlugin.put( plugin, listener );
+        eventBus.register(listener);
+        listenersByPlugin.put(plugin, listener);
     }
 
     /**
@@ -373,10 +326,9 @@ public class PluginManager
      *
      * @param listener the listener to unregister
      */
-    public void unregisterListener(Listener listener)
-    {
-        eventBus.unregister( listener );
-        listenersByPlugin.values().remove( listener );
+    public void unregisterListener(Listener listener) {
+        eventBus.unregister(listener);
+        listenersByPlugin.values().remove(listener);
     }
 
     /**
@@ -384,11 +336,9 @@ public class PluginManager
      *
      * @param plugin
      */
-    public void unregisterListeners(Plugin plugin)
-    {
-        for ( Iterator<Listener> it = listenersByPlugin.get( plugin ).iterator(); it.hasNext(); )
-        {
-            eventBus.unregister( it.next() );
+    public void unregisterListeners(Plugin plugin) {
+        for (Iterator<Listener> it = listenersByPlugin.get(plugin).iterator(); it.hasNext(); ) {
+            eventBus.unregister(it.next());
             it.remove();
         }
     }

@@ -6,8 +6,7 @@ import lombok.ToString;
 
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class PacketCCSettings extends DefinedPacket
-{
+public class PacketCCSettings extends DefinedPacket {
 
     private String locale;
     private byte viewDistance;
@@ -15,15 +14,13 @@ public class PacketCCSettings extends DefinedPacket
     private byte difficulty;
     private boolean showCape;
 
-    private PacketCCSettings()
-    {
-        super( 0xCC );
+    private PacketCCSettings() {
+        super(0xCC);
     }
 
     @Override
-    public void read(ByteBuf buf)
-    {
-        locale = readString( buf );
+    public void read(ByteBuf buf) {
+        locale = readString(buf);
         viewDistance = buf.readByte();
         chatFlags = buf.readByte();
         difficulty = buf.readByte();
@@ -31,18 +28,16 @@ public class PacketCCSettings extends DefinedPacket
     }
 
     @Override
-    public void write(ByteBuf buf)
-    {
-        writeString( locale, buf );
-        buf.writeByte( viewDistance );
-        buf.writeByte( chatFlags );
-        buf.writeByte( difficulty );
-        buf.writeBoolean( showCape );
+    public void write(ByteBuf buf) {
+        writeString(locale, buf);
+        buf.writeByte(viewDistance);
+        buf.writeByte(chatFlags);
+        buf.writeByte(difficulty);
+        buf.writeBoolean(showCape);
     }
 
     @Override
-    public void handle(AbstractPacketHandler handler) throws Exception
-    {
-        handler.handle( this );
+    public void handle(AbstractPacketHandler handler) throws Exception {
+        handler.handle(this);
     }
 }

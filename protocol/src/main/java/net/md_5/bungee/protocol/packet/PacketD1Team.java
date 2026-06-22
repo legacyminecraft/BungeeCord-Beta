@@ -8,8 +8,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class PacketD1Team extends DefinedPacket
-{
+public class PacketD1Team extends DefinedPacket {
 
     private String name;
     /**
@@ -23,9 +22,8 @@ public class PacketD1Team extends DefinedPacket
     private short playerCount;
     private String[] players;
 
-    private PacketD1Team()
-    {
-        super( 0xD1 );
+    private PacketD1Team() {
+        super(0xD1);
     }
 
     /**
@@ -33,60 +31,50 @@ public class PacketD1Team extends DefinedPacket
      *
      * @param name
      */
-    public PacketD1Team(String name)
-    {
+    public PacketD1Team(String name) {
         this();
         this.name = name;
         this.mode = 1;
     }
 
     @Override
-    public void read(ByteBuf buf)
-    {
-        name = readString( buf );
+    public void read(ByteBuf buf) {
+        name = readString(buf);
         mode = buf.readByte();
-        if ( mode == 0 || mode == 2 )
-        {
-            displayName = readString( buf );
-            prefix = readString( buf );
-            suffix = readString( buf );
+        if (mode == 0 || mode == 2) {
+            displayName = readString(buf);
+            prefix = readString(buf);
+            suffix = readString(buf);
             friendlyFire = buf.readBoolean();
         }
-        if ( mode == 0 || mode == 3 || mode == 4 )
-        {
-            players = new String[ buf.readShort() ];
-            for ( int i = 0; i < getPlayers().length; i++ )
-            {
-                players[i] = readString( buf );
+        if (mode == 0 || mode == 3 || mode == 4) {
+            players = new String[buf.readShort()];
+            for (int i = 0; i < getPlayers().length; i++) {
+                players[i] = readString(buf);
             }
         }
     }
 
     @Override
-    public void write(ByteBuf buf)
-    {
-        writeString( name, buf );
-        buf.writeByte( mode );
-        if ( mode == 0 || mode == 2 )
-        {
-            writeString( displayName, buf );
-            writeString( prefix, buf );
-            writeString( suffix, buf );
-            buf.writeBoolean( friendlyFire );
+    public void write(ByteBuf buf) {
+        writeString(name, buf);
+        buf.writeByte(mode);
+        if (mode == 0 || mode == 2) {
+            writeString(displayName, buf);
+            writeString(prefix, buf);
+            writeString(suffix, buf);
+            buf.writeBoolean(friendlyFire);
         }
-        if ( mode == 0 || mode == 3 || mode == 4 )
-        {
-            buf.writeShort( players.length );
-            for ( int i = 0; i < players.length; i++ )
-            {
-                writeString( players[i], buf );
+        if (mode == 0 || mode == 3 || mode == 4) {
+            buf.writeShort(players.length);
+            for (int i = 0; i < players.length; i++) {
+                writeString(players[i], buf);
             }
         }
     }
 
     @Override
-    public void handle(AbstractPacketHandler handler) throws Exception
-    {
-        handler.handle( this );
+    public void handle(AbstractPacketHandler handler) throws Exception {
+        handler.handle(this);
     }
 }

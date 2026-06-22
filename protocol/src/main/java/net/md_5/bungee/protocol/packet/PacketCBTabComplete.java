@@ -8,44 +8,37 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class PacketCBTabComplete extends DefinedPacket
-{
+public class PacketCBTabComplete extends DefinedPacket {
 
     private String cursor;
     private String[] commands;
 
-    private PacketCBTabComplete()
-    {
-        super( 0xCB );
+    private PacketCBTabComplete() {
+        super(0xCB);
     }
 
-    public PacketCBTabComplete(String[] alternatives)
-    {
+    public PacketCBTabComplete(String[] alternatives) {
         this();
         commands = alternatives;
     }
 
     @Override
-    public void read(ByteBuf buf)
-    {
-        cursor = readString( buf );
+    public void read(ByteBuf buf) {
+        cursor = readString(buf);
     }
 
     @Override
-    public void write(ByteBuf buf)
-    {
+    public void write(ByteBuf buf) {
         StringBuilder tab = new StringBuilder();
-        for ( String alternative : commands )
-        {
-            tab.append( alternative );
-            tab.append( "\00" );
+        for (String alternative : commands) {
+            tab.append(alternative);
+            tab.append("\00");
         }
-        writeString( tab.substring( 0, tab.length() - 1 ), buf );
+        writeString(tab.substring(0, tab.length() - 1), buf);
     }
 
     @Override
-    public void handle(AbstractPacketHandler handler) throws Exception
-    {
-        handler.handle( this );
+    public void handle(AbstractPacketHandler handler) throws Exception {
+        handler.handle(this);
     }
 }

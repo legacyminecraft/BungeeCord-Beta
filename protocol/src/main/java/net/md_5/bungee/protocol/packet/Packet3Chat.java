@@ -10,37 +10,31 @@ import lombok.ToString;
 @Setter
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class Packet3Chat extends DefinedPacket
-{
+public class Packet3Chat extends DefinedPacket {
 
     private String message;
 
-    private Packet3Chat()
-    {
-        super( 0x03 );
+    private Packet3Chat() {
+        super(0x03);
     }
 
-    public Packet3Chat(String message)
-    {
+    public Packet3Chat(String message) {
         this();
         this.message = message;
     }
 
     @Override
-    public void read(ByteBuf buf)
-    {
-        message = readString( buf );
+    public void read(ByteBuf buf) {
+        message = readString(buf);
     }
 
     @Override
-    public void write(ByteBuf buf)
-    {
-        writeString( message, buf );
+    public void write(ByteBuf buf) {
+        writeString(message, buf);
     }
 
     @Override
-    public void handle(AbstractPacketHandler handler) throws Exception
-    {
-        handler.handle( this );
+    public void handle(AbstractPacketHandler handler) throws Exception {
+        handler.handle(this);
     }
 }

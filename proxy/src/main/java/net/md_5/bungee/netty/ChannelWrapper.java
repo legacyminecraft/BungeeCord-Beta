@@ -6,53 +6,43 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
 
-public class ChannelWrapper
-{
+public class ChannelWrapper {
 
     private final Channel ch;
     @Getter
     private volatile boolean closed;
 
-    public ChannelWrapper(ChannelHandlerContext ctx)
-    {
+    public ChannelWrapper(ChannelHandlerContext ctx) {
         this.ch = ctx.channel();
     }
 
-    public synchronized void write(Object packet)
-    {
-        if ( !closed )
-        {
-            if ( packet instanceof PacketWrapper )
-            {
-                ( (PacketWrapper) packet ).setReleased( true );
-                ch.write( ( (PacketWrapper) packet ).buf );
-            } else
-            {
-                ch.write( packet );
+    public synchronized void write(Object packet) {
+        if (!closed) {
+            if (packet instanceof PacketWrapper) {
+                ((PacketWrapper) packet).setReleased(true);
+                ch.write(((PacketWrapper) packet).buf);
+            } else {
+                ch.write(packet);
             }
             ch.flush();
         }
     }
 
-    public synchronized void close()
-    {
-        if ( !closed )
-        {
+    public synchronized void close() {
+        if (!closed) {
             closed = true;
             ch.flush();
             ch.close();
         }
     }
 
-    public void addBefore(String baseName, String name, ChannelHandler handler)
-    {
-        Preconditions.checkState( ch.eventLoop().inEventLoop(), "cannot add handler outside of event loop" );
+    public void addBefore(String baseName, String name, ChannelHandler handler) {
+        Preconditions.checkState(ch.eventLoop().inEventLoop(), "cannot add handler outside of event loop");
         ch.pipeline().flush();
-        ch.pipeline().addBefore( baseName, name, handler );
+        ch.pipeline().addBefore(baseName, name, handler);
     }
 
-    public Channel getHandle()
-    {
+    public Channel getHandle() {
         return ch;
     }
 }

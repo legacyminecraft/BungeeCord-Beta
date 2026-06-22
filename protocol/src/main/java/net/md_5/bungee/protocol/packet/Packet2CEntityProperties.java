@@ -8,40 +8,33 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class Packet2CEntityProperties extends DefinedPacket
-{
+public class Packet2CEntityProperties extends DefinedPacket {
 
-    public Packet2CEntityProperties()
-    {
-        super( 0x2C );
+    public Packet2CEntityProperties() {
+        super(0x2C);
     }
 
     @Override
-    public void read(ByteBuf buf)
-    {
+    public void read(ByteBuf buf) {
         buf.readInt();
         int recordCount = buf.readInt();
-        for ( int i = 0; i < recordCount; i++ )
-        {
-            readString( buf );
+        for (int i = 0; i < recordCount; i++) {
+            readString(buf);
             buf.readDouble();
             short size = buf.readShort();
-            for ( short s = 0; s < size; s++ )
-            {
-                buf.skipBytes( 25 ); // long, long, double, byte
+            for (short s = 0; s < size; s++) {
+                buf.skipBytes(25); // long, long, double, byte
             }
         }
     }
 
     @Override
-    public void write(ByteBuf buf)
-    {
+    public void write(ByteBuf buf) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void handle(AbstractPacketHandler handler) throws Exception
-    {
-        handler.handle( this );
+    public void handle(AbstractPacketHandler handler) throws Exception {
+        handler.handle(this);
     }
 }

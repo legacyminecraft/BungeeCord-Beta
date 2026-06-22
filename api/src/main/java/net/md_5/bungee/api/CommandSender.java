@@ -2,8 +2,7 @@ package net.md_5.bungee.api;
 
 import java.util.Collection;
 
-public interface CommandSender
-{
+public interface CommandSender {
 
     /**
      * Get the unique name of this command sender.

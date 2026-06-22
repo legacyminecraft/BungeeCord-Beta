@@ -8,41 +8,35 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class PacketFCEncryptionResponse extends DefinedPacket
-{
+public class PacketFCEncryptionResponse extends DefinedPacket {
 
     private byte[] sharedSecret;
     private byte[] verifyToken;
 
-    private PacketFCEncryptionResponse()
-    {
-        super( 0xFC );
+    private PacketFCEncryptionResponse() {
+        super(0xFC);
     }
 
-    public PacketFCEncryptionResponse(byte[] sharedSecret, byte[] verifyToken)
-    {
+    public PacketFCEncryptionResponse(byte[] sharedSecret, byte[] verifyToken) {
         this();
         this.sharedSecret = sharedSecret;
         this.verifyToken = verifyToken;
     }
 
     @Override
-    public void read(ByteBuf buf)
-    {
-        sharedSecret = readArray( buf );
-        verifyToken = readArray( buf );
+    public void read(ByteBuf buf) {
+        sharedSecret = readArray(buf);
+        verifyToken = readArray(buf);
     }
 
     @Override
-    public void write(ByteBuf buf)
-    {
-        writeArray( sharedSecret, buf );
-        writeArray( verifyToken, buf );
+    public void write(ByteBuf buf) {
+        writeArray(sharedSecret, buf);
+        writeArray(verifyToken, buf);
     }
 
     @Override
-    public void handle(AbstractPacketHandler handler) throws Exception
-    {
-        handler.handle( this );
+    public void handle(AbstractPacketHandler handler) throws Exception {
+        handler.handle(this);
     }
 }

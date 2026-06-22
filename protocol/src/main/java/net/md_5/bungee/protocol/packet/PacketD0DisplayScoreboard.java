@@ -8,8 +8,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode(callSuper = false)
-public class PacketD0DisplayScoreboard extends DefinedPacket
-{
+public class PacketD0DisplayScoreboard extends DefinedPacket {
 
     /**
      * 0 = list, 1 = side, 2 = below.
@@ -17,28 +16,24 @@ public class PacketD0DisplayScoreboard extends DefinedPacket
     private byte position;
     private String name;
 
-    private PacketD0DisplayScoreboard()
-    {
-        super( 0xD0 );
+    private PacketD0DisplayScoreboard() {
+        super(0xD0);
     }
 
     @Override
-    public void read(ByteBuf buf)
-    {
+    public void read(ByteBuf buf) {
         position = buf.readByte();
-        name = readString( buf );
+        name = readString(buf);
     }
 
     @Override
-    public void write(ByteBuf buf)
-    {
-        buf.writeByte( position );
-        writeString( name, buf );
+    public void write(ByteBuf buf) {
+        buf.writeByte(position);
+        writeString(name, buf);
     }
 
     @Override
-    public void handle(AbstractPacketHandler handler) throws Exception
-    {
-        handler.handle( this );
+    public void handle(AbstractPacketHandler handler) throws Exception {
+        handler.handle(this);
     }
 }
