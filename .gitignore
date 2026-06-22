@@ -1,37 +1,37 @@
-# Eclipse stuff
-.classpath
-.project
-.settings/
-
-# netbeans
-nbproject/
-nbactions.xml
-
-# we use maven!
-build.xml
-
-# maven
 target/
-dependency-reduced-pom.xml
+**/pom.xml.releaseBackup
+release.properties
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# vim
-.*.sw[a-p]
-
-# various other potential build files
-build/
-bin/
-dist/
-manifest.mf
-
-# Mac filesystem dust
-.DS_Store/
-
-# intellij
+### IntelliJ IDEA ###
+.idea/
+*.iws
 *.iml
 *.ipr
-*.iws
-.idea/
 
-# other files
-*.log*
-*.yml
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
