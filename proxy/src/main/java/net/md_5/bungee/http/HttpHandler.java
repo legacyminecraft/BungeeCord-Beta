@@ -30,8 +30,8 @@ public class HttpHandler extends SimpleChannelInboundHandler<HttpObject> {
     protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
         if (msg instanceof HttpResponse) {
             HttpResponse response = (HttpResponse) msg;
-            if (response.getStatus().code() != 200) {
-                throw new IllegalStateException("Expected HTTP response 200 OK, got " + response.getStatus());
+            if (response.status().code() != 200) {
+                throw new IllegalStateException("Expected HTTP response 200 OK, got " + response.status());
             }
         }
         if (msg instanceof HttpContent) {

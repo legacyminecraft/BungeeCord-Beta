@@ -8,8 +8,9 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.MultiThreadIoEventLoopGroup;
 import io.netty.channel.MultithreadEventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.ResourceLeakDetector;
 import jline.UnsupportedTerminal;
@@ -88,7 +89,10 @@ public class BungeeCord extends ProxyServer {
      * Localization bundle.
      */
     public final ResourceBundle bundle = ResourceBundle.getBundle("messages");
-    public final MultithreadEventLoopGroup eventLoops = new NioEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty IO Thread #%1$d").build());
+    public final MultithreadEventLoopGroup eventLoops = new MultiThreadIoEventLoopGroup(
+            0,
+            new ThreadFactoryBuilder().setNameFormat("Netty IO Thread #%1$d").build(),
+            NioIoHandler.newFactory());
     /**
      * locations.yml save thread.
      */
@@ -170,7 +174,7 @@ public class BungeeCord extends ProxyServer {
      */
     @Override
     public void start() throws Exception {
-        ResourceLeakDetector.setEnabled(false); // Eats performance
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED); // Eats performance
 
         pluginsFolder.mkdir();
         pluginManager.detectPlugins(pluginsFolder);

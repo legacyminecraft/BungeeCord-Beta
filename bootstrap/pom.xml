@@ -20,7 +20,7 @@
         <dependency>
             <groupId>net.sf.jopt-simple</groupId>
             <artifactId>jopt-simple</artifactId>
-            <version>4.5</version>
+            <version>6.0-alpha-3</version>
         </dependency>
     </dependencies>
 

@@ -1,10 +1,11 @@
 package net.md_5.bungee;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ThrottleTest {
 
@@ -19,13 +20,13 @@ public class ThrottleTest {
             address = InetAddress.getByName(null);
         }
 
-        Assert.assertFalse("Address should not be throttled", throttle.throttle(address));
-        Assert.assertTrue("Address should be throttled", throttle.throttle(address));
+        assertFalse(throttle.throttle(address), "Address should not be throttled");
+        assertTrue(throttle.throttle(address), "Address should be throttled");
 
         throttle.unthrottle(address);
-        Assert.assertFalse("Address should not be throttled", throttle.throttle(address));
+        assertFalse(throttle.throttle(address), "Address should not be throttled");
 
         Thread.sleep(15);
-        Assert.assertFalse("Address should not be throttled", throttle.throttle(address));
+        assertFalse(throttle.throttle(address), "Address should not be throttled");
     }
 }
