@@ -61,4 +61,8 @@ public class Util {
 
         return (ret.length() == 0) ? "" : ret.substring(0, ret.length() - separators.length());
     }
+
+    public static String truncate(String message) {
+        return message.substring(0, Math.min(message.length(), 100));
+    }
 }

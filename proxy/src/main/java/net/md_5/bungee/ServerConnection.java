@@ -38,7 +38,7 @@ public class ServerConnection implements Server {
     public synchronized void disconnect(String reason) {
         if (!ch.isClosed()) {
             // TODO: Can we just use a future here?
-            unsafe().sendPacket(new PacketFFKick(reason));
+            unsafe().sendPacket(new PacketFFKick(Util.truncate(reason)));
             ch.getHandle().eventLoop().schedule(new Runnable() {
                 @Override
                 public void run() {

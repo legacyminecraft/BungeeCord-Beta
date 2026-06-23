@@ -180,7 +180,7 @@ public final class UserConnection implements ProxiedPlayer {
     public synchronized void disconnect(String reason) {
         if (ch.getHandle().isActive()) {
             bungee.getLogger().log(Level.INFO, "[" + getName() + "] disconnected with: " + reason);
-            unsafe().sendPacket(new PacketFFKick(reason));
+            unsafe().sendPacket(new PacketFFKick(Util.truncate(reason)));
             ch.close();
             if (server != null) {
                 server.disconnect("Quitting");

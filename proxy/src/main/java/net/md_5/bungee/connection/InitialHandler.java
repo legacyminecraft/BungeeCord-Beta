@@ -200,7 +200,7 @@ public class InitialHandler extends PacketHandler implements PendingConnection {
     @Override
     public synchronized void disconnect(String reason) {
         if (!ch.isClosed()) {
-            unsafe().sendPacket(new PacketFFKick(reason));
+            unsafe().sendPacket(new PacketFFKick(Util.truncate(reason)));
             ch.close();
         }
     }
