@@ -6,11 +6,8 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.command.ConsoleCommandSender;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class Bootstrap {
 
@@ -34,23 +31,6 @@ public class Bootstrap {
         if (options.has("version")) {
             System.out.println(Bootstrap.class.getPackage().getImplementationVersion());
             return;
-        }
-
-        if (!System.getProperty("java.version").startsWith("1.7")) {
-            System.err.println("*** ERROR *** BungeeCord requires Java 7 to function!");
-            return;
-        }
-
-        if (BungeeCord.class.getPackage().getSpecificationVersion() != null) {
-            Calendar deadline = Calendar.getInstance();
-            deadline.add(Calendar.WEEK_OF_YEAR, 2);
-            if (Calendar.getInstance().after(new SimpleDateFormat("yyyyMMdd").parse(BungeeCord.class.getPackage().getSpecificationVersion()))) {
-                System.err.println("*** Warning, this build is outdated ***");
-                System.err.println("*** Please download a new build from http://ci.md-5.net/job/BungeeCord ***");
-                System.err.println("*** You will get NO support regarding this build ***");
-                System.err.println("*** Server will start in 30 seconds ***");
-                Thread.sleep(TimeUnit.SECONDS.toMillis(30));
-            }
         }
 
         System.setProperty("java.net.preferIPv4Stack", "true");

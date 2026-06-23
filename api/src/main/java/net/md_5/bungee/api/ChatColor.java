@@ -72,31 +72,7 @@ public enum ChatColor {
     /**
      * Represents white.
      */
-    WHITE('f'),
-    /**
-     * Represents magical characters that change around randomly.
-     */
-    MAGIC('k'),
-    /**
-     * Makes the text bold.
-     */
-    BOLD('l'),
-    /**
-     * Makes a line appear through the text.
-     */
-    STRIKETHROUGH('m'),
-    /**
-     * Makes the text appear underlined.
-     */
-    UNDERLINE('n'),
-    /**
-     * Makes the text italic.
-     */
-    ITALIC('o'),
-    /**
-     * Resets all previous chat colors or formats.
-     */
-    RESET('r');
+    WHITE('f');
     /**
      * The special character which prefixes all chat colour codes. Use this if
      * you need to dynamically convert colour codes from your custom format.
@@ -105,7 +81,7 @@ public enum ChatColor {
     /**
      * Pattern to remove all colour codes.
      */
-    private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + String.valueOf(COLOR_CHAR) + "[0-9A-FK-OR]");
+    private static final Pattern STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + String.valueOf(COLOR_CHAR) + "[0-9A-F]");
     /**
      * Colour instances keyed by their active character.
      */
@@ -155,7 +131,7 @@ public enum ChatColor {
     public static String translateAlternateColorCodes(char altColorChar, String textToTranslate) {
         char[] b = textToTranslate.toCharArray();
         for (int i = 0; i < b.length - 1; i++) {
-            if (b[i] == altColorChar && "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[i + 1]) > -1) {
+            if (b[i] == altColorChar && "0123456789AaBbCcDdEeFf".indexOf(b[i + 1]) > -1) {
                 b[i] = ChatColor.COLOR_CHAR;
                 b[i + 1] = Character.toLowerCase(b[i + 1]);
             }

@@ -8,41 +8,25 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 public class Packet9Respawn extends DefinedPacket {
 
-    private int dimension;
-    private byte difficulty;
-    private byte gameMode;
-    private short worldHeight;
-    private String levelType;
+    private byte dimension;
 
     private Packet9Respawn() {
         super(0x09);
     }
 
-    public Packet9Respawn(int dimension, byte difficulty, byte gameMode, short worldHeight, String levelType) {
+    public Packet9Respawn(byte dimension) {
         this();
         this.dimension = dimension;
-        this.difficulty = difficulty;
-        this.gameMode = gameMode;
-        this.worldHeight = worldHeight;
-        this.levelType = levelType;
     }
 
     @Override
     public void read(ByteBuf buf) {
-        dimension = buf.readInt();
-        difficulty = buf.readByte();
-        gameMode = buf.readByte();
-        worldHeight = buf.readShort();
-        levelType = readString(buf);
+        dimension = buf.readByte();
     }
 
     @Override
     public void write(ByteBuf buf) {
-        buf.writeInt(dimension);
-        buf.writeByte(difficulty);
-        buf.writeByte(gameMode);
-        buf.writeShort(worldHeight);
-        writeString(levelType, buf);
+        buf.writeByte(dimension);
     }
 
     @Override

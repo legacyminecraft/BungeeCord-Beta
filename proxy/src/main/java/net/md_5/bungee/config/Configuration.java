@@ -13,7 +13,6 @@ import net.md_5.bungee.util.CaseInsensitiveSet;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Core configuration for the proxy.
@@ -25,10 +24,6 @@ public class Configuration {
      * Time before users are disconnected due to no network activity.
      */
     private int timeout = 30000;
-    /**
-     * UUID used for metrics.
-     */
-    private String uuid = UUID.randomUUID().toString();
     /**
      * Set of all listeners.
      */
@@ -51,7 +46,6 @@ public class Configuration {
 
         listeners = adapter.getListeners();
         timeout = adapter.getInt("timeout", timeout);
-        uuid = adapter.getString("stats", uuid);
         onlineMode = adapter.getBoolean("online_mode", onlineMode);
         playerLimit = adapter.getInt("player_limit", playerLimit);
         throttle = adapter.getInt("connection_throttle", throttle);

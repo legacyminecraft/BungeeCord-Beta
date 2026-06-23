@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.jar.JarEntry;
@@ -91,10 +90,6 @@ public class PluginManager {
         }
     }
 
-    public boolean dispatchCommand(CommandSender sender, String commandLine) {
-        return dispatchCommand(sender, commandLine, null);
-    }
-
     /**
      * Execute a command if it is registered, else return false.
      *
@@ -103,7 +98,7 @@ public class PluginManager {
      * arguments
      * @return whether the command was handled
      */
-    public boolean dispatchCommand(CommandSender sender, String commandLine, List<String> tabResults) {
+    public boolean dispatchCommand(CommandSender sender, String commandLine) {
         String[] split = argsSplit.split(commandLine);
         // Check for chat that only contains " "
         if (split.length == 0) {
@@ -127,13 +122,7 @@ public class PluginManager {
 
         String[] args = Arrays.copyOfRange(split, 1, split.length);
         try {
-            if (tabResults == null) {
-                command.execute(sender, args);
-            } else if (command instanceof TabExecutor) {
-                for (String s : ((TabExecutor) command).onTabComplete(sender, args)) {
-                    tabResults.add(s);
-                }
-            }
+            command.execute(sender, args);
         } catch (Exception ex) {
             sender.sendMessage(ChatColor.RED + "An internal error occurred whilst executing this command, please check the console log for details.");
             ProxyServer.getInstance().getLogger().log(Level.WARNING, "Error in dispatching command", ex);

@@ -3,9 +3,9 @@ package net.md_5.bungee.api.event;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.plugin.Cancellable;
+import net.md_5.bungee.api.plugin.Event;
 
 /**
  * Event called to represent a player logging in.
@@ -13,7 +13,7 @@ import net.md_5.bungee.api.plugin.Cancellable;
 @Data
 @ToString(callSuper = false)
 @EqualsAndHashCode(callSuper = false)
-public class LoginEvent extends AsyncEvent<LoginEvent> implements Cancellable {
+public class LoginEvent extends Event implements Cancellable {
 
     /**
      * Cancelled state.
@@ -28,8 +28,7 @@ public class LoginEvent extends AsyncEvent<LoginEvent> implements Cancellable {
      */
     private final PendingConnection connection;
 
-    public LoginEvent(PendingConnection connection, Callback<LoginEvent> done) {
-        super(done);
+    public LoginEvent(PendingConnection connection) {
         this.connection = connection;
     }
 }

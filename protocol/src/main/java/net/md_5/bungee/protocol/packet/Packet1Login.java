@@ -11,52 +11,36 @@ import lombok.ToString;
 public class Packet1Login extends DefinedPacket {
 
     protected int entityId;
-    protected String levelType;
-    protected byte gameMode;
-    protected int dimension;
-    protected byte difficulty;
-    protected byte unused;
-    protected byte maxPlayers;
+    protected String username;
+    protected long seed;
+    protected byte dimension;
 
     protected Packet1Login() {
         super(0x01);
     }
 
-    public Packet1Login(int entityId, String levelType, byte gameMode, byte dimension, byte difficulty, byte unused, byte maxPlayers) {
-        this(entityId, levelType, gameMode, (int) dimension, difficulty, unused, maxPlayers);
-    }
-
-    public Packet1Login(int entityId, String levelType, byte gameMode, int dimension, byte difficulty, byte unused, byte maxPlayers) {
+    public Packet1Login(int entityId, String username, long seed, byte dimension) {
         this();
         this.entityId = entityId;
-        this.levelType = levelType;
-        this.gameMode = gameMode;
+        this.username = username;
+        this.seed = seed;
         this.dimension = dimension;
-        this.difficulty = difficulty;
-        this.unused = unused;
-        this.maxPlayers = maxPlayers;
     }
 
     @Override
     public void read(ByteBuf buf) {
         entityId = buf.readInt();
-        levelType = readString(buf);
-        gameMode = buf.readByte();
+        username = readString(buf);
+        seed = buf.readLong();
         dimension = buf.readByte();
-        difficulty = buf.readByte();
-        unused = buf.readByte();
-        maxPlayers = buf.readByte();
     }
 
     @Override
     public void write(ByteBuf buf) {
         buf.writeInt(entityId);
-        writeString(levelType, buf);
-        buf.writeByte(gameMode);
+        writeString(username, buf);
+        buf.writeLong(seed);
         buf.writeByte(dimension);
-        buf.writeByte(difficulty);
-        buf.writeByte(unused);
-        buf.writeByte(maxPlayers);
     }
 
     @Override

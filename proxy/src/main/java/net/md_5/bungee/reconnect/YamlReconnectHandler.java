@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -68,8 +67,7 @@ public class YamlReconnectHandler extends AbstractReconnectHandler {
     }
 
     private String key(ProxiedPlayer player) {
-        InetSocketAddress host = player.getPendingConnection().getVirtualHost();
-        return player.getName() + ";" + host.getHostString() + ":" + host.getPort();
+        return player.getName();
     }
 
     @Override

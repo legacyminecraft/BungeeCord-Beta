@@ -15,7 +15,6 @@
         <module>event</module>
         <module>protocol</module>
         <module>proxy</module>
-        <module>query</module>
     </modules>
 
     <properties>

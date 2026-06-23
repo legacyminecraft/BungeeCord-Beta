@@ -16,7 +16,7 @@ public class CommandReload extends Command {
         BungeeCord.getInstance().config.load();
         BungeeCord.getInstance().stopListeners();
         BungeeCord.getInstance().startListeners();
-        sender.sendMessage(ChatColor.BOLD.toString() + ChatColor.RED.toString() + "BungeeCord has been reloaded."
+        sender.sendMessage(ChatColor.RED.toString() + "BungeeCord has been reloaded."
                 + " This is NOT advisable and you will not be supported with any issues that arise! Please restart BungeeCord ASAP.");
     }
 }

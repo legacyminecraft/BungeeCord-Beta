@@ -18,8 +18,6 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PermissionCheckEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
-import net.md_5.bungee.api.score.Scoreboard;
-import net.md_5.bungee.api.tab.TabListHandler;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.netty.ChannelWrapper;
 import net.md_5.bungee.netty.HandlerBoss;
@@ -27,7 +25,6 @@ import net.md_5.bungee.netty.PacketWrapper;
 import net.md_5.bungee.netty.PipelineUtils;
 import net.md_5.bungee.protocol.packet.DefinedPacket;
 import net.md_5.bungee.protocol.packet.Packet3Chat;
-import net.md_5.bungee.protocol.packet.PacketCCSettings;
 import net.md_5.bungee.protocol.packet.PacketFAPluginMessage;
 import net.md_5.bungee.protocol.packet.PacketFFKick;
 import net.md_5.bungee.util.CaseInsensitiveSet;
@@ -62,8 +59,6 @@ public final class UserConnection implements ProxiedPlayer {
     private final Collection<ServerInfo> pendingConnects = new HashSet<>();
     /*========================================================================*/
     @Getter
-    private TabListHandler tabList;
-    @Getter
     @Setter
     private int sentPingId;
     @Getter
@@ -85,14 +80,6 @@ public final class UserConnection implements ProxiedPlayer {
     @Getter
     @Setter
     private int serverEntityId;
-    @Getter
-    @Setter
-    private PacketCCSettings settings;
-    @Getter
-    private final Scoreboard serverSentScoreboard = new Scoreboard();
-    /*========================================================================*/
-    @Getter
-    private String displayName;
     /*========================================================================*/
     private final Unsafe unsafe = new Unsafe() {
         @Override
@@ -102,24 +89,10 @@ public final class UserConnection implements ProxiedPlayer {
     };
 
     public void init() {
-        this.displayName = name;
-        try {
-            this.tabList = getPendingConnection().getListener().getTabList().getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException ex) {
-            throw new RuntimeException(ex);
-        }
-        this.tabList.init(this);
-
         Collection<String> g = bungee.getConfigurationAdapter().getGroups(name);
         for (String s : g) {
             addGroups(s);
         }
-    }
-
-    @Override
-    public void setTabList(TabListHandler tabList) {
-        tabList.init(this);
-        this.tabList = tabList;
     }
 
     public void sendPacket(PacketWrapper packet) {
@@ -132,26 +105,11 @@ public final class UserConnection implements ProxiedPlayer {
     }
 
     @Override
-    public void setDisplayName(String name) {
-        Preconditions.checkNotNull(name, "displayName");
-        Preconditions.checkArgument(name.length() <= 16, "Display name cannot be longer than 16 characters");
-        getTabList().onDisconnect();
-        displayName = name;
-        getTabList().onConnect();
-    }
-
-    @Override
     public void connect(ServerInfo target) {
         connect(target, false);
     }
 
-    void sendDimensionSwitch() {
-        unsafe().sendPacket(PacketConstants.DIM1_SWITCH);
-        unsafe().sendPacket(PacketConstants.DIM2_SWITCH);
-    }
-
     public void connectNow(ServerInfo target) {
-        sendDimensionSwitch();
         connect(target);
     }
 
@@ -237,9 +195,7 @@ public final class UserConnection implements ProxiedPlayer {
 
     @Override
     public void sendMessage(String message) {
-        // TODO: Fix this
-        String encoded = BungeeCord.getInstance().gson.toJson(message);
-        unsafe().sendPacket(new Packet3Chat("{\"text\":" + encoded + "}"));
+        unsafe().sendPacket(new Packet3Chat(message));
     }
 
     @Override

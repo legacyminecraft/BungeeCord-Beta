@@ -1,8 +1,6 @@
 package net.md_5.bungee.api.config;
 
-import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ServerPing;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.net.InetSocketAddress;
@@ -51,19 +49,4 @@ public interface ServerInfo {
      * @return whether access is granted to this server
      */
     boolean canAccess(CommandSender sender);
-
-    /**
-     * Send data by any available means to this server.
-     *
-     * @param channel the channel to send this data via
-     * @param data the data to send
-     */
-    void sendData(String channel, byte[] data);
-
-    /**
-     * Asynchronously gets the current player count on this server.
-     *
-     * @param callback the callback to call when the count has been retrieved.
-     */
-    void ping(Callback<ServerPing> callback);
 }

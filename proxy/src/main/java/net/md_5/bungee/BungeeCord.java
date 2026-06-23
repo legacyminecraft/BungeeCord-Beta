@@ -2,7 +2,6 @@ package net.md_5.bungee;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.gson.Gson;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
@@ -27,7 +26,6 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
-import net.md_5.bungee.api.tab.CustomTabList;
 import net.md_5.bungee.command.CommandAlert;
 import net.md_5.bungee.command.CommandBungee;
 import net.md_5.bungee.command.CommandEnd;
@@ -48,10 +46,8 @@ import net.md_5.bungee.protocol.Vanilla;
 import net.md_5.bungee.protocol.packet.DefinedPacket;
 import net.md_5.bungee.protocol.packet.Packet3Chat;
 import net.md_5.bungee.protocol.packet.PacketFAPluginMessage;
-import net.md_5.bungee.query.RemoteQuery;
 import net.md_5.bungee.reconnect.YamlReconnectHandler;
 import net.md_5.bungee.scheduler.BungeeScheduler;
-import net.md_5.bungee.tab.Custom;
 import net.md_5.bungee.util.CaseInsensitiveMap;
 import org.fusesource.jansi.AnsiConsole;
 
@@ -96,7 +92,6 @@ public class BungeeCord extends ProxyServer {
      * locations.yml save thread.
      */
     private final Timer saveThread = new Timer("Reconnect Saver");
-    private final Timer metricsThread = new Timer("Metrics Thread");
     /**
      * Server socket listener.
      */
@@ -126,7 +121,6 @@ public class BungeeCord extends ProxyServer {
     private ConsoleReader consoleReader;
     @Getter
     private final Logger logger;
-    public final Gson gson = new Gson();
     @Getter
     private ConnectionThrottle connectionThrottle;
 
@@ -201,7 +195,6 @@ public class BungeeCord extends ProxyServer {
                 }
             }
         }, 0, TimeUnit.MINUTES.toMillis(5));
-        metricsThread.scheduleAtFixedRate(new Metrics(), 0, TimeUnit.MINUTES.toMillis(Metrics.PING_INTERVAL));
     }
 
     public void startListeners() {
@@ -224,21 +217,6 @@ public class BungeeCord extends ProxyServer {
                     .group(eventLoops)
                     .localAddress(info.getHost())
                     .bind().addListener(listener);
-
-            if (info.isQueryEnabled()) {
-                ChannelFutureListener bindListener = new ChannelFutureListener() {
-                    @Override
-                    public void operationComplete(ChannelFuture future) throws Exception {
-                        if (future.isSuccess()) {
-                            listeners.add(future.channel());
-                            getLogger().info("Started query on " + future.channel().localAddress());
-                        } else {
-                            getLogger().log(Level.WARNING, "Could not bind to host " + future.channel().remoteAddress(), future.cause());
-                        }
-                    }
-                };
-                new RemoteQuery(this, info).start(new InetSocketAddress(info.getHost().getAddress(), info.getQueryPort()), eventLoops, bindListener);
-            }
         }
     }
 
@@ -287,7 +265,6 @@ public class BungeeCord extends ProxyServer {
                     reconnectHandler.close();
                 }
                 saveThread.cancel();
-                metricsThread.cancel();
 
                 // TODO: Fix this shit
                 getLogger().info("Disabling plugins");
@@ -425,9 +402,7 @@ public class BungeeCord extends ProxyServer {
     @Override
     public void broadcast(String message) {
         getConsole().sendMessage(message);
-        // TODO: Here too
-        String encoded = BungeeCord.getInstance().gson.toJson(message);
-        broadcast(new Packet3Chat("{\"text\":" + encoded + "}"));
+        broadcast(new Packet3Chat(message));
     }
 
     public void addConnection(UserConnection con) {
@@ -446,11 +421,6 @@ public class BungeeCord extends ProxyServer {
         } finally {
             connectionLock.writeLock().unlock();
         }
-    }
-
-    @Override
-    public CustomTabList customTabList(ProxiedPlayer player) {
-        return new Custom(player);
     }
 
     public Collection<String> getDisabledCommands() {

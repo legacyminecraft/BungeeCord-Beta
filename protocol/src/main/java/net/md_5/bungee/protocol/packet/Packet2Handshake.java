@@ -12,29 +12,25 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 public class Packet2Handshake extends DefinedPacket {
 
-    private byte protocolVersion;
     private String username;
-    private String host;
-    private int port;
 
     private Packet2Handshake() {
         super(0x02);
     }
 
+    public Packet2Handshake(String username) {
+        this();
+        this.username = username;
+    }
+
     @Override
     public void read(ByteBuf buf) {
-        protocolVersion = buf.readByte();
         username = readString(buf);
-        host = readString(buf);
-        port = buf.readInt();
     }
 
     @Override
     public void write(ByteBuf buf) {
-        buf.writeByte(protocolVersion);
         writeString(username, buf);
-        writeString(host, buf);
-        buf.writeInt(port);
     }
 
     @Override

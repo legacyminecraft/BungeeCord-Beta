@@ -7,7 +7,6 @@ import io.netty.handler.timeout.ReadTimeoutException;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.connection.CancelSendSignal;
 import net.md_5.bungee.connection.InitialHandler;
-import net.md_5.bungee.connection.PingHandler;
 import net.md_5.bungee.protocol.BadPacketException;
 
 import java.io.IOException;
@@ -34,7 +33,7 @@ public class HandlerBoss extends ChannelInboundHandlerAdapter {
             channel = new ChannelWrapper(ctx);
             handler.connected(channel);
 
-            if (!(handler instanceof InitialHandler || handler instanceof PingHandler)) {
+            if (!(handler instanceof InitialHandler)) {
                 ProxyServer.getInstance().getLogger().log(Level.INFO, "{0} has connected", handler);
             }
         }
@@ -45,7 +44,7 @@ public class HandlerBoss extends ChannelInboundHandlerAdapter {
         if (handler != null) {
             handler.disconnected(channel);
 
-            if (!(handler instanceof InitialHandler || handler instanceof PingHandler)) {
+            if (!(handler instanceof InitialHandler)) {
                 ProxyServer.getInstance().getLogger().log(Level.INFO, "{0} has disconnected", handler);
             }
         }

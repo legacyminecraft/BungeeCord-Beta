@@ -49,8 +49,6 @@ public class PipelineUtils {
     public static String PACKET_DECODE_HANDLER = "packet-decoder";
     public static String PACKET_ENCODE_HANDLER = "packet-encoder";
     public static String BOSS_HANDLER = "inbound-boss";
-    public static String ENCRYPT_HANDLER = "encrypt";
-    public static String DECRYPT_HANDLER = "decrypt";
 
     public final static class Base extends ChannelInitializer<Channel> {
 

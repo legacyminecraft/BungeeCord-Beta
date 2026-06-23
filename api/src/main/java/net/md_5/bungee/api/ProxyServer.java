@@ -8,7 +8,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.api.scheduler.TaskScheduler;
-import net.md_5.bungee.api.tab.CustomTabList;
 
 import java.io.File;
 import java.net.InetSocketAddress;
@@ -231,14 +230,6 @@ public abstract class ProxyServer {
      * @param message the message to broadcast
      */
     public abstract void broadcast(String message);
-
-    /**
-     * Gets a new instance of this proxies custom tab list.
-     *
-     * @param player the player to generate this list in the context of
-     * @return a new {@link CustomTabList} instance
-     */
-    public abstract CustomTabList customTabList(ProxiedPlayer player);
 
     /**
      * Gets the commands which are disabled and will not be run on this proxy.

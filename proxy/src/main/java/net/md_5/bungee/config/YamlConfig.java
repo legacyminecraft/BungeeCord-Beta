@@ -1,16 +1,11 @@
 package net.md_5.bungee.config;
 
-import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.Util;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ConfigurationAdapter;
 import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.tab.TabListHandler;
-import net.md_5.bungee.tab.Global;
-import net.md_5.bungee.tab.GlobalPing;
-import net.md_5.bungee.tab.ServerUnique;
 import net.md_5.bungee.util.CaseInsensitiveMap;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -31,16 +26,6 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class YamlConfig implements ConfigurationAdapter {
-
-    /**
-     * The default tab list options available for picking.
-     */
-    @RequiredArgsConstructor
-    private enum DefaultTabList {
-
-        GLOBAL(Global.class), GLOBAL_PING(GlobalPing.class), SERVER(ServerUnique.class);
-        private final Class<? extends TabListHandler> clazz;
-    }
 
     private Yaml yaml;
     private Map config;
@@ -164,9 +149,6 @@ public class YamlConfig implements ConfigurationAdapter {
                 {
                         new HashMap()
                 }));
-        Map<String, String> forcedDef = new HashMap<>();
-        forcedDef.put("pvp.md-5.net", "pvp");
-
         Collection<ListenerInfo> ret = new HashSet<>();
 
         for (Map<String, Object> val : base) {
@@ -178,21 +160,10 @@ public class YamlConfig implements ConfigurationAdapter {
             String fallbackServer = get("fallback_server", defaultServer, val);
             boolean forceDefault = get("force_default_server", false, val);
             String host = get("host", "0.0.0.0:25577", val);
-            int tabListSize = get("tab_size", 60, val);
             InetSocketAddress address = Util.getAddr(host);
-            Map<String, String> forced = new CaseInsensitiveMap<>(get("forced_hosts", forcedDef, val));
-            String tabListName = get("tab_list", "GLOBAL_PING", val);
-            DefaultTabList value = DefaultTabList.valueOf(tabListName.toUpperCase());
-            if (value == null) {
-                value = DefaultTabList.GLOBAL_PING;
-            }
             boolean setLocalAddress = get("bind_local_address", true, val);
-            boolean pingPassthrough = get("ping_passthrough", false, val);
 
-            boolean query = get("query_enabled", false, val);
-            int queryPort = get("query_port", 25577, val);
-
-            ListenerInfo info = new ListenerInfo(address, motd, maxPlayers, tabListSize, defaultServer, fallbackServer, forceDefault, forced, value.clazz, setLocalAddress, pingPassthrough, queryPort, query);
+            ListenerInfo info = new ListenerInfo(address, motd, maxPlayers, defaultServer, fallbackServer, forceDefault, setLocalAddress);
             ret.add(info);
         }
 

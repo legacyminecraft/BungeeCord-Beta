@@ -2,8 +2,6 @@ package net.md_5.bungee.api.connection;
 
 import net.md_5.bungee.api.config.ListenerInfo;
 
-import java.net.InetSocketAddress;
-
 /**
  * Represents a user attempting to log into the proxy.
  */
@@ -21,14 +19,7 @@ public interface PendingConnection extends Connection {
      *
      * @return the protocol version of the remote client
      */
-    byte getVersion();
-
-    /**
-     * Get the requested virtual host that the client tried to connect to.
-     *
-     * @return request virtual host or null if invalid / not specified.
-     */
-    InetSocketAddress getVirtualHost();
+    int getVersion();
 
     /**
      * Get the listener that accepted this connection.

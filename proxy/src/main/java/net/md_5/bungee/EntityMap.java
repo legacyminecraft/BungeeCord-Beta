@@ -119,14 +119,12 @@ public class EntityMap {
 
     public static void rewrite(ByteBuf packet, int oldId, int newId) {
         int packetId = packet.getUnsignedByte(0);
-        if (packetId == 0x1D) { // bulk entity
-            for (int pos = 2; pos < packet.readableBytes(); pos += 4) {
-                int readId = packet.getInt(pos);
-                if (readId == oldId) {
-                    packet.setInt(pos, newId);
-                } else if (readId == newId) {
-                    packet.setInt(pos, oldId);
-                }
+        if (packetId == 0x1D) { // destroy entity
+            int readId = packet.getInt(1);
+            if (readId == oldId) {
+                packet.setInt(1, newId);
+            } else if (readId == newId) {
+                packet.setInt(1, oldId);
             }
         } else {
             int[] idArray = entityIds[packetId];
@@ -144,9 +142,9 @@ public class EntityMap {
         if (packetId == 0x17) {
             int type = packet.getUnsignedByte(5);
             if (type == 60 || type == 90) {
-                int index20 = packet.getInt(20);
-                if (packet.readableBytes() > 24 && index20 == oldId) {
-                    packet.setInt(20, newId);
+                int index1 = packet.getInt(1);
+                if (packet.readableBytes() > 5 && index1 == oldId) {
+                    packet.setInt(1, newId);
                 }
             }
         }
