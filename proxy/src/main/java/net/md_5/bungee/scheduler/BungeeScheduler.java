@@ -5,9 +5,9 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import gnu.trove.TCollections;
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 import net.md_5.bungee.api.scheduler.TaskScheduler;
@@ -23,7 +23,7 @@ public class BungeeScheduler implements TaskScheduler {
 
     private final ExecutorService s = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("Bungee Pool Thread #%1$d").build());
     private final AtomicInteger taskCounter = new AtomicInteger();
-    private final TIntObjectMap<BungeeTask> tasks = TCollections.synchronizedMap(new TIntObjectHashMap<BungeeTask>());
+    private final Int2ObjectMap<BungeeTask> tasks = Int2ObjectMaps.synchronize(new Int2ObjectOpenHashMap<>());
     private final Multimap<Plugin, BungeeTask> tasksByPlugin = Multimaps.synchronizedMultimap(HashMultimap.<Plugin, BungeeTask>create());
 
     public void shutdown() {

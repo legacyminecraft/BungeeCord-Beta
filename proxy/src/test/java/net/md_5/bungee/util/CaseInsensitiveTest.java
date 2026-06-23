@@ -12,12 +12,12 @@ public class CaseInsensitiveTest {
         CaseInsensitiveMap<Object> map = new CaseInsensitiveMap<>();
 
         map.put("FOO", obj);
-        assertTrue(map.contains("foo")); // Assert that contains is case insensitive
-        assertTrue(map.entrySet().iterator().next().getKey().equals("FOO")); // Assert that case is preserved
+        assertTrue(map.containsKey("foo")); // Assert that contains is case insensitive
+        assertEquals("FOO", map.entrySet().iterator().next().getKey()); // Assert that case is preserved
 
         // Assert that remove is case insensitive
         map.remove("FoO");
-        assertFalse(map.contains("foo"));
+        assertFalse(map.containsKey("foo"));
     }
 
     @Test

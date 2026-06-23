@@ -1,7 +1,6 @@
 package net.md_5.bungee.config;
 
 import com.google.common.base.Preconditions;
-import gnu.trove.map.TMap;
 import lombok.Getter;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ConfigurationAdapter;
@@ -31,7 +30,7 @@ public class Configuration {
     /**
      * Set of all servers.
      */
-    private TMap<String, ServerInfo> servers;
+    private Map<String, ServerInfo> servers;
     /**
      * Should we check minecraft.net auth.
      */
