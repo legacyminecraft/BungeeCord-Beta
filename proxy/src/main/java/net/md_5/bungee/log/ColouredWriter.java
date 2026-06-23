@@ -7,8 +7,10 @@ import org.fusesource.jansi.Ansi;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
-public class ColouredWriter {
+public class ColouredWriter extends Handler {
 
     private final Map<ChatColor, String> replacements = new EnumMap<>(ChatColor.class);
     private final ChatColor[] colors = ChatColor.values();
@@ -45,5 +47,20 @@ public class ColouredWriter {
             console.flush();
         } catch (IOException ex) {
         }
+    }
+
+    @Override
+    public void publish(LogRecord record) {
+        if (isLoggable(record)) {
+            print(getFormatter().format(record));
+        }
+    }
+
+    @Override
+    public void flush() {
+    }
+
+    @Override
+    public void close() {
     }
 }
