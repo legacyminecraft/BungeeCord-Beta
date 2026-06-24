@@ -44,9 +44,8 @@ public class PipelineUtils {
         @Override
         protected void initChannel(Channel ch) throws Exception {
             if (BungeeCord.getInstance().getConnectionThrottle().throttle(((InetSocketAddress) ch.remoteAddress()).getAddress())) {
-                // TODO: Better throttle - we can't throttle this way if we want to maintain 1.7 compat!
-                // ch.close();
-                // return;
+                ch.close();
+                return;
             }
 
             BASE.initChannel(ch);
