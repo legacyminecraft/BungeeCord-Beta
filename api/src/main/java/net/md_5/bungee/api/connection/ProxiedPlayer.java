@@ -26,13 +26,6 @@ public interface ProxiedPlayer extends Connection, CommandSender {
     Server getServer();
 
     /**
-     * Gets the ping time between the proxy and this connection.
-     *
-     * @return the current ping time
-     */
-    int getPing();
-
-    /**
      * Send a plugin message to this player.
      *
      * @param channel the channel to send this data via

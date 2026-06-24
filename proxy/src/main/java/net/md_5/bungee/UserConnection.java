@@ -60,15 +60,6 @@ public final class UserConnection implements ProxiedPlayer {
     /*========================================================================*/
     @Getter
     @Setter
-    private int sentPingId;
-    @Getter
-    @Setter
-    private long sentPingTime;
-    @Getter
-    @Setter
-    private int ping = 100;
-    @Getter
-    @Setter
     private ServerInfo reconnectServer;
     /*========================================================================*/
     private final Collection<String> groups = new CaseInsensitiveSet();
