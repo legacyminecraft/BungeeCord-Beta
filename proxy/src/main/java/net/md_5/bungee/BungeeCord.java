@@ -8,10 +8,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.MultiThreadIoEventLoopGroup;
-import io.netty.channel.MultithreadEventLoopGroup;
-import io.netty.channel.nio.NioIoHandler;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.EventLoopGroup;
 import io.netty.util.ResourceLeakDetector;
 import jline.UnsupportedTerminal;
 import jline.console.ConsoleReader;
@@ -89,10 +86,7 @@ public class BungeeCord extends ProxyServer {
      * Localization bundle.
      */
     public final ResourceBundle bundle = ResourceBundle.getBundle("messages");
-    public final MultithreadEventLoopGroup eventLoops = new MultiThreadIoEventLoopGroup(
-            0,
-            new ThreadFactoryBuilder().setNameFormat("Netty IO Thread #%1$d").build(),
-            NioIoHandler.newFactory());
+    public final EventLoopGroup eventLoops = PipelineUtils.newEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty IO Thread #%1$d").build());
     /**
      * locations.yml save thread.
      */
@@ -216,7 +210,7 @@ public class BungeeCord extends ProxyServer {
                 }
             };
             new ServerBootstrap()
-                    .channel(NioServerSocketChannel.class)
+                    .channel(PipelineUtils.getServerChannelType())
                     .childAttr(PipelineUtils.LISTENER, info)
                     .childHandler(PipelineUtils.SERVER_CHILD)
                     .group(eventLoops)

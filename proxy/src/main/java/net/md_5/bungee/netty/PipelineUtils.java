@@ -4,6 +4,22 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.IoHandlerFactory;
+import io.netty.channel.MultiThreadIoEventLoopGroup;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollIoHandler;
+import io.netty.channel.epoll.EpollServerSocketChannel;
+import io.netty.channel.epoll.EpollSocketChannel;
+import io.netty.channel.kqueue.KQueue;
+import io.netty.channel.kqueue.KQueueIoHandler;
+import io.netty.channel.kqueue.KQueueServerSocketChannel;
+import io.netty.channel.kqueue.KQueueSocketChannel;
+import io.netty.channel.nio.NioIoHandler;
+import io.netty.channel.socket.ServerSocketChannel;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.AttributeKey;
 import net.md_5.bungee.BungeeCord;
@@ -16,6 +32,7 @@ import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.protocol.Vanilla;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 public class PipelineUtils {
@@ -65,5 +82,26 @@ public class PipelineUtils {
             ch.pipeline().addLast(PACKET_ENCODE_HANDLER, packetEncoder);
             ch.pipeline().addLast(BOSS_HANDLER, new HandlerBoss());
         }
+    }
+
+    public static EventLoopGroup newEventLoopGroup(int threads, ThreadFactory threadFactory) {
+        IoHandlerFactory ioHandlerFactory =
+                Epoll.isAvailable() ? EpollIoHandler.newFactory()
+                : KQueue.isAvailable() ? KQueueIoHandler.newFactory()
+                : NioIoHandler.newFactory();
+
+        return new MultiThreadIoEventLoopGroup(threads, threadFactory, ioHandlerFactory);
+    }
+
+    public static Class<? extends ServerSocketChannel> getServerChannelType() {
+        return Epoll.isAvailable() ? EpollServerSocketChannel.class
+                : KQueue.isAvailable() ? KQueueServerSocketChannel.class
+                : NioServerSocketChannel.class;
+    }
+
+    public static Class<? extends SocketChannel> getChannelType() {
+        return Epoll.isAvailable() ? EpollSocketChannel.class
+                : KQueue.isAvailable() ? KQueueSocketChannel.class
+                : NioSocketChannel.class;
     }
 }
