@@ -1,6 +1,10 @@
 package net.md_5.bungee;
 
 import com.google.common.base.Preconditions;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
@@ -18,10 +22,17 @@ import net.md_5.bungee.protocol.packet.Packet9Respawn;
 import net.md_5.bungee.protocol.packet.PacketFAPluginMessage;
 import net.md_5.bungee.protocol.packet.PacketFFKick;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.util.Objects;
 
 @RequiredArgsConstructor
 public class ServerConnector extends PacketHandler {
+
+    private static final Gson GSON = new Gson();
 
     private final ProxyServer bungee;
     private ChannelWrapper ch;
@@ -48,15 +59,40 @@ public class ServerConnector extends PacketHandler {
     public void connected(ChannelWrapper channel) throws Exception {
         this.ch = channel;
 
-        // TODO: implement IP forwarding scheme
-        /*ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("Login");
-        out.writeUTF(user.getAddress().getHostString());
-        out.writeInt(user.getAddress().getPort());
-        channel.write(new PacketFAPluginMessage("BungeeCord", out.toByteArray()));*/
-
+        writeProxyHelloMessage();
         channel.write(user.getPendingConnection().getHandshake());
         channel.write(user.getPendingConnection().getLogin());
+    }
+
+    private void writeProxyHelloMessage() {
+        String secret = target.getSecret();
+        if (secret == null) {
+            return;
+        }
+
+        InetSocketAddress address = user.getPendingConnection().getAddress();
+        JsonObject object = new JsonObject();
+        object.addProperty("sourceHost", address.getHostString());
+        object.addProperty("sourcePort", address.getPort());
+        byte[] detailsBytes = GSON.toJson(object).getBytes(StandardCharsets.UTF_8);
+
+        byte[] signature;
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            byte[] secretBytes = secret.getBytes(StandardCharsets.UTF_8);
+            mac.init(new SecretKeySpec(secretBytes, "HmacSHA256"));
+            signature = mac.doFinal(detailsBytes);
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException("Failed to write proxy hello message", e);
+        }
+
+        ByteArrayDataOutput output = ByteStreams.newDataOutput();
+        output.writeShort(detailsBytes.length);
+        output.write(detailsBytes);
+        output.writeShort(signature.length);
+        output.write(signature);
+
+        ch.write(new PacketFAPluginMessage("proxy#hello", output.toByteArray()));
     }
 
     @Override

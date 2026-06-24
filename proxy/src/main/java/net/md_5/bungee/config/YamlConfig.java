@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class YamlConfig implements ConfigurationAdapter {
@@ -134,8 +135,9 @@ public class YamlConfig implements ConfigurationAdapter {
             String addr = get("address", "localhost:25565", val);
             String motd = ChatColor.translateAlternateColorCodes('&', get("motd", "&1Just another BungeeCord - Forced Host", val));
             boolean restricted = get("restricted", false, val);
+            String secret = get("secret", "none", val);
             InetSocketAddress address = Util.getAddr(addr);
-            ServerInfo info = ProxyServer.getInstance().constructServerInfo(name, address, motd, restricted);
+            ServerInfo info = ProxyServer.getInstance().constructServerInfo(name, address, motd, restricted, Objects.equals(secret, "none") ? null : secret);
             ret.put(name, info);
         }
 

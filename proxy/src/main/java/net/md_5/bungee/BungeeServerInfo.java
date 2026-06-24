@@ -1,6 +1,7 @@
 package net.md_5.bungee;
 
 import com.google.common.base.Preconditions;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
@@ -26,6 +27,8 @@ public class BungeeServerInfo implements ServerInfo {
     private final String motd;
     @Getter
     private final boolean restricted;
+    @Getter(AccessLevel.PACKAGE)
+    private final String secret;
 
     @Synchronized("players")
     public void addPlayer(ProxiedPlayer player) {
