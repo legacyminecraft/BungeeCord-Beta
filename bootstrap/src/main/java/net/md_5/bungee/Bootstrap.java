@@ -37,7 +37,7 @@ public class Bootstrap {
 
         BungeeCord bungee = new BungeeCord();
         ProxyServer.setInstance(bungee);
-        bungee.getLogger().info("Enabled BungeeCord version " + bungee.getVersion());
+        bungee.getLogger().info("Enabled BungeeCord version " + bungee.getFullVersion());
         bungee.start();
 
         while (bungee.isRunning) {

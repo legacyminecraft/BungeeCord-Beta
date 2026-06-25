@@ -2,6 +2,7 @@ package net.md_5.bungee;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.legacyminecraft.bungee.BungeeBuildInformation;
 import com.legacyminecraft.bungee.api.TextWrapper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -74,6 +75,10 @@ import java.util.logging.Logger;
  */
 public class BungeeCord extends ProxyServer {
 
+    /**
+     * Build information.
+     */
+    private final BungeeBuildInformation buildInformation = new BungeeBuildInformation();
     /**
      * Current operation state.
      */
@@ -307,7 +312,12 @@ public class BungeeCord extends ProxyServer {
 
     @Override
     public String getVersion() {
-        return (BungeeCord.class.getPackage().getImplementationVersion() == null) ? "unknown" : BungeeCord.class.getPackage().getImplementationVersion();
+        return this.buildInformation.implVersion();
+    }
+
+    @Override
+    public String getFullVersion() {
+        return this.buildInformation.asFullVersionString();
     }
 
     @Override

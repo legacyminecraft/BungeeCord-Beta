@@ -47,6 +47,14 @@ public abstract class ProxyServer {
     public abstract String getVersion();
 
     /**
+     * Gets the version of the currently running proxy software, including the
+     * git properties and build timestamp.
+     *
+     * @return the full version of this instance
+     */
+    public abstract String getFullVersion();
+
+    /**
      * Gets a localized string from the .properties file.
      *
      * @return the localized string
