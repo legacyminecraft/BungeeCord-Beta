@@ -1,36 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>com.legacyminecraft</groupId>
-        <artifactId>bungeecord-beta-parent</artifactId>
+        <artifactId>bungeeposeidon-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bungeecord-beta-api</artifactId>
+    <artifactId>bungeeposeidon-api</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <fastutil.version>8.5.19</fastutil.version>
+        <guava.version>33.6.0-jre</guava.version>
+        <gson.version>2.14.0</gson.version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.legacyminecraft</groupId>
-            <artifactId>bungeecord-beta-config</artifactId>
+            <artifactId>bungeeposeidon-config</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.legacyminecraft</groupId>
-            <artifactId>bungeecord-beta-event</artifactId>
+            <artifactId>bungeeposeidon-event</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.legacyminecraft</groupId>
-            <artifactId>bungeecord-beta-protocol</artifactId>
+            <artifactId>bungeeposeidon-protocol</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>it.unimi.dsi</groupId>
+            <artifactId>fastutil-core</artifactId>
+            <version>${fastutil.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>33.6.0-jre</version>
+            <version>${guava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
         </dependency>
     </dependencies>
 
@@ -71,4 +89,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

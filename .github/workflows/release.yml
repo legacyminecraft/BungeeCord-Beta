@@ -49,6 +49,6 @@ jobs:
           tag_name: ${{ env.PROJECT_VERSION }}
           name: ${{ env.PROJECT_VERSION }}
           files: |
-            bootstrap/target/bungeecord-beta-bootstrap-*.jar
+            bootstrap/target/bungeeposeidon-bootstrap-*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,6 +1,6 @@
-BungeeCord-Beta
+BungeePoseidon
 ==========
-A fork of BungeeCord modified for use with Beta 1.7.3 servers.
+A fork of BungeeCord modified for use with [Project Poseidon V2](https://github.com/legacyminecraft/Project-Poseidon-V2).
 
 The most reliable Minecraft server portal suite.
 ------------------------------------------------

@@ -1,26 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>com.legacyminecraft</groupId>
-        <artifactId>bungeecord-beta-parent</artifactId>
+        <artifactId>bungeeposeidon-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bungeecord-beta-bootstrap</artifactId>
+    <artifactId>bungeeposeidon-bootstrap</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <joptsimple.version>6.0-alpha-3</joptsimple.version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.legacyminecraft</groupId>
-            <artifactId>bungeecord-beta-proxy</artifactId>
+            <artifactId>bungeeposeidon-proxy</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.sf.jopt-simple</groupId>
             <artifactId>jopt-simple</artifactId>
-            <version>6.0-alpha-3</version>
+            <version>${joptsimple.version}</version>
         </dependency>
     </dependencies>
 
@@ -147,4 +153,5 @@
             </build>
         </profile>
     </profiles>
+
 </project>

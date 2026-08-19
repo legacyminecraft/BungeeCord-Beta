@@ -1,36 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>com.legacyminecraft</groupId>
-        <artifactId>bungeecord-beta-parent</artifactId>
+        <artifactId>bungeeposeidon-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bungeecord-beta-proxy</artifactId>
+    <artifactId>bungeeposeidon-proxy</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <jline.version>2.11</jline.version>
+        <mysql-connector-j.version>26.7.0</mysql-connector-j.version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.legacyminecraft</groupId>
-            <artifactId>bungeecord-beta-api</artifactId>
+            <artifactId>bungeeposeidon-api</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.legacyminecraft</groupId>
-            <artifactId>bungeecord-beta-protocol</artifactId>
+            <artifactId>bungeeposeidon-protocol</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>jline</groupId>
             <artifactId>jline</artifactId>
-            <version>2.11</version>
-        </dependency>
-        <dependency>
-            <groupId>it.unimi.dsi</groupId>
-            <artifactId>fastutil-core</artifactId>
-            <version>8.5.19</version>
+            <version>${jline.version}</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
@@ -62,15 +64,10 @@
             <version>${netty.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.14.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>26.7.0</version>
-            <scope>runtime</scope>
+            <version>${mysql-connector-j.version}</version>
         </dependency>
     </dependencies>
+
 </project>

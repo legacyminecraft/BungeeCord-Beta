@@ -1,26 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>com.legacyminecraft</groupId>
-        <artifactId>bungeecord-beta-parent</artifactId>
+        <artifactId>bungeeposeidon-parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bungeecord-beta-config</artifactId>
+    <artifactId>bungeeposeidon-config</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <snakeyaml.version>2.6</snakeyaml.version>
+        <configurate.version>4.2.0</configurate.version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>2.6</version>
+            <version>${snakeyaml.version}</version>
         </dependency>
         <dependency>
             <groupId>org.spongepowered</groupId>
             <artifactId>configurate-yaml</artifactId>
-            <version>4.2.0</version>
+            <version>${configurate.version}</version>
         </dependency>
     </dependencies>
+
 </project>

@@ -1,4 +1,4 @@
-package com.legacyminecraft.bungee;
+package com.legacyminecraft.bungeeposeidon;
 
 import java.io.IOException;
 import java.io.InputStream;

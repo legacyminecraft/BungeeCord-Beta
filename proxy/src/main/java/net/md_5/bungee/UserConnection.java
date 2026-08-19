@@ -1,7 +1,7 @@
 package net.md_5.bungee;
 
 import com.google.common.base.Preconditions;
-import com.legacyminecraft.bungee.api.TextWrapper;
+import com.legacyminecraft.bungeeposeidon.api.TextWrapper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
