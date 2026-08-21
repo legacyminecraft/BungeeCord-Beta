@@ -41,7 +41,7 @@ public class Bootstrap {
         bungee.start();
 
         while (bungee.isRunning) {
-            String line = bungee.getConsoleReader().readLine(">");
+            String line = bungee.getLineReader().readLine("> ");
             if (line != null) {
                 if (!bungee.getPluginManager().dispatchCommand(ConsoleCommandSender.getInstance(), line)) {
                     bungee.getConsole().sendMessage(ChatColor.RED + "Command not found");

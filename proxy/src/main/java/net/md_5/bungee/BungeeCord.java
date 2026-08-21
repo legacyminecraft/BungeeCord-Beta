@@ -1,6 +1,5 @@
 package net.md_5.bungee;
 
-import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.legacyminecraft.bungeeposeidon.BungeeBuildInformation;
 import com.legacyminecraft.bungeeposeidon.api.TextWrapper;
@@ -11,9 +10,6 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoopGroup;
 import io.netty.util.ResourceLeakDetector;
-import jline.UnsupportedTerminal;
-import jline.console.ConsoleReader;
-import jline.internal.Log;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Synchronized;
@@ -49,7 +45,10 @@ import net.md_5.bungee.protocol.packet.PacketFAPluginMessage;
 import net.md_5.bungee.reconnect.YamlReconnectHandler;
 import net.md_5.bungee.scheduler.BungeeScheduler;
 import net.md_5.bungee.util.CaseInsensitiveMap;
-import org.fusesource.jansi.AnsiConsole;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -122,7 +121,7 @@ public class BungeeCord extends ProxyServer {
     @Getter
     private final BungeeScheduler scheduler = new BungeeScheduler();
     @Getter
-    private ConsoleReader consoleReader;
+    private LineReader lineReader;
     @Getter
     private final Logger logger;
     @Getter
@@ -150,29 +149,27 @@ public class BungeeCord extends ProxyServer {
     }
 
     public BungeeCord() throws IOException {
-        Log.setOutput(new PrintStream(ByteStreams.nullOutputStream())); // TODO: Bug JLine
-        AnsiConsole.systemInstall();
-        consoleReader = new ConsoleReader();
-        consoleReader.setExpandEvents(false);
+        Terminal terminal = TerminalBuilder.builder()
+                .system(true)
+                .graphemeCluster(false)
+                .build();
+
+        lineReader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .option(LineReader.Option.DISABLE_EVENT_EXPANSION, true)
+                .build();
 
         logger = new BungeeLogger(this);
         System.setErr(new PrintStream(new LoggingOutputStream(logger, Level.SEVERE), true));
         System.setOut(new PrintStream(new LoggingOutputStream(logger, Level.INFO), true));
-
-        if (consoleReader.getTerminal() instanceof UnsupportedTerminal) {
-            logger.info("Unable to initialize fancy terminal. To fix this on Windows, install the correct Microsoft Visual C++ 2008 Runtime");
-            logger.info("NOTE: This error is non crucial, and BungeeCord will still function correctly! Do not bug the author about it unless you are still unable to get it working");
-        }
     }
 
     /**
      * Start this proxy instance by loading the configuration, plugins and
      * starting the connect thread.
-     *
-     * @throws Exception
      */
     @Override
-    public void start() throws Exception {
+    public void start() {
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED); // Eats performance
 
         pluginsFolder.mkdir();

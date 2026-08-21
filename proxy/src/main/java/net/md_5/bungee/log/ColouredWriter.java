@@ -1,52 +1,24 @@
 package net.md_5.bungee.log;
 
-import jline.console.ConsoleReader;
+import net.kyori.ansi.ANSIComponentRenderer;
+import net.kyori.ansi.StyleOps;
 import net.md_5.bungee.api.ChatColor;
-import org.fusesource.jansi.Ansi;
+import org.jline.reader.LineReader;
+import org.jspecify.annotations.Nullable;
 
-import java.io.IOException;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
 public class ColouredWriter extends Handler {
 
-    private final Map<ChatColor, String> replacements = new EnumMap<>(ChatColor.class);
-    private final ChatColor[] colors = ChatColor.values();
-    private final ConsoleReader console;
+    private final LineReader lineReader;
 
-    public ColouredWriter(ConsoleReader console) {
-        this.console = console;
-
-        replacements.put(ChatColor.BLACK, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.BLACK).boldOff().toString());
-        replacements.put(ChatColor.DARK_BLUE, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.BLUE).boldOff().toString());
-        replacements.put(ChatColor.DARK_GREEN, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.GREEN).boldOff().toString());
-        replacements.put(ChatColor.DARK_AQUA, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.CYAN).boldOff().toString());
-        replacements.put(ChatColor.DARK_RED, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.RED).boldOff().toString());
-        replacements.put(ChatColor.DARK_PURPLE, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.MAGENTA).boldOff().toString());
-        replacements.put(ChatColor.GOLD, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.YELLOW).boldOff().toString());
-        replacements.put(ChatColor.GRAY, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.WHITE).boldOff().toString());
-        replacements.put(ChatColor.DARK_GRAY, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.BLACK).bold().toString());
-        replacements.put(ChatColor.BLUE, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.BLUE).bold().toString());
-        replacements.put(ChatColor.GREEN, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.GREEN).bold().toString());
-        replacements.put(ChatColor.AQUA, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.CYAN).bold().toString());
-        replacements.put(ChatColor.RED, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.RED).bold().toString());
-        replacements.put(ChatColor.LIGHT_PURPLE, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.MAGENTA).bold().toString());
-        replacements.put(ChatColor.YELLOW, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.YELLOW).bold().toString());
-        replacements.put(ChatColor.WHITE, Ansi.ansi().a(Ansi.Attribute.RESET).fg(Ansi.Color.WHITE).bold().toString());
+    public ColouredWriter(LineReader lineReader) {
+        this.lineReader = lineReader;
     }
 
     public void print(String s) {
-        for (ChatColor color : colors) {
-            s = s.replaceAll("(?i)" + color.toString(), replacements.get(color));
-        }
-        try {
-            console.print(ConsoleReader.RESET_LINE + s + Ansi.ansi().reset().toString());
-            console.drawLine();
-            console.flush();
-        } catch (IOException ex) {
-        }
+        lineReader.printAbove(chatColorsToAnsi(s));
     }
 
     @Override
@@ -62,5 +34,87 @@ public class ColouredWriter extends Handler {
 
     @Override
     public void close() {
+    }
+
+    private static String chatColorsToAnsi(String text) {
+        ANSIComponentRenderer.ToString<ChatColor> renderer = ANSIComponentRenderer.toString(ChatColorStyle.instance);
+        ChatColor lastColor = ChatColor.WHITE;
+        renderer.pushStyle(lastColor);
+
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (ch == '\u00A7' && i < text.length() - 1) {
+                ChatColor color = ChatColor.getByChar(text.charAt(i + 1));
+                if (color != null) {
+                    renderer.popStyle(lastColor);
+                    lastColor = color;
+                    renderer.pushStyle(lastColor);
+                    i++;
+                    continue;
+                }
+            }
+
+            renderer.text(String.valueOf(ch));
+        }
+
+        renderer.popStyle(lastColor);
+        renderer.complete();
+        return renderer.asString();
+    }
+
+    private static final class ChatColorStyle implements StyleOps<ChatColor> {
+        private static final ChatColorStyle instance = new ChatColorStyle();
+
+        @Override
+        public int color(ChatColor color) {
+            return switch (color) {
+                case BLACK -> 0x000000;
+                case DARK_BLUE -> 0x0000AA;
+                case DARK_GREEN -> 0x00AA00;
+                case DARK_AQUA -> 0x00AAAA;
+                case DARK_RED -> 0xAA0000;
+                case DARK_PURPLE -> 0xAA00AA;
+                case GOLD -> 0xFFAA00;
+                case GRAY -> 0xAAAAAA;
+                case DARK_GRAY -> 0x555555;
+                case BLUE -> 0x5555FF;
+                case GREEN -> 0x55FF55;
+                case AQUA -> 0x55FFFF;
+                case RED -> 0xFF5555;
+                case LIGHT_PURPLE -> 0xFF55FF;
+                case YELLOW -> 0xFFFF55;
+                default -> 0xFFFFFF;
+            };
+        }
+
+        @Override
+        public State bold(ChatColor color) {
+            return State.UNSET;
+        }
+
+        @Override
+        public State italics(ChatColor color) {
+            return State.UNSET;
+        }
+
+        @Override
+        public State underlined(ChatColor color) {
+            return State.UNSET;
+        }
+
+        @Override
+        public State strikethrough(ChatColor color) {
+            return State.UNSET;
+        }
+
+        @Override
+        public State obfuscated(ChatColor color) {
+            return State.UNSET;
+        }
+
+        @Override
+        public @Nullable String font(ChatColor color) {
+            return null;
+        }
     }
 }

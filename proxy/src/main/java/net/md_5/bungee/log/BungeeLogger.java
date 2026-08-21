@@ -21,7 +21,7 @@ public class BungeeLogger extends Logger {
             fileHandler.setFormatter(new ConciseFormatter(false, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")));
             addHandler(fileHandler);
 
-            ColouredWriter consoleHandler = new ColouredWriter(bungee.getConsoleReader());
+            ColouredWriter consoleHandler = new ColouredWriter(bungee.getLineReader());
             consoleHandler.setFormatter(new ConciseFormatter(true, new SimpleDateFormat("HH:mm:ss")));
             addHandler(consoleHandler);
         } catch (IOException ex) {
