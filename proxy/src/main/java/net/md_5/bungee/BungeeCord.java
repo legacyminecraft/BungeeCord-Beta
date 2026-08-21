@@ -2,7 +2,8 @@ package net.md_5.bungee;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.legacyminecraft.bungeeposeidon.BungeeBuildInformation;
-import com.legacyminecraft.bungeeposeidon.api.TextWrapper;
+import com.legacyminecraft.bungeeposeidon.api.ping.ServerIcon;
+import com.legacyminecraft.bungeeposeidon.api.util.TextWrapper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
@@ -49,11 +50,14 @@ import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -126,6 +130,8 @@ public class BungeeCord extends ProxyServer {
     private final Logger logger;
     @Getter
     private ConnectionThrottle connectionThrottle;
+    @Getter
+    private @Nullable ServerIcon serverIcon;
 
 
     {
@@ -169,8 +175,13 @@ public class BungeeCord extends ProxyServer {
      * starting the connect thread.
      */
     @Override
-    public void start() {
+    public void start() throws IOException {
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.DISABLED); // Eats performance
+
+        Path iconPath = Path.of("server-icon.png");
+        if (Files.exists(iconPath)) {
+            this.serverIcon = ServerIcon.load(iconPath);
+        }
 
         pluginsFolder.mkdir();
         pluginManager.detectPlugins(pluginsFolder);

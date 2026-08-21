@@ -1,6 +1,7 @@
 package net.md_5.bungee.api;
 
 import com.google.common.base.Preconditions;
+import com.legacyminecraft.bungeeposeidon.api.ping.ServerIcon;
 import lombok.Getter;
 import net.md_5.bungee.api.config.ConfigurationAdapter;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -8,6 +9,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.api.scheduler.TaskScheduler;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.net.InetSocketAddress;
@@ -53,6 +55,13 @@ public abstract class ProxyServer {
      * @return the full version of this instance
      */
     public abstract String getFullVersion();
+
+    /**
+     * Returns the server icon that is displayed on the server list.
+     *
+     * @return the server icon, or {@code null} if not set
+     */
+    public abstract @Nullable ServerIcon getServerIcon();
 
     /**
      * Gets a localized string from the .properties file.

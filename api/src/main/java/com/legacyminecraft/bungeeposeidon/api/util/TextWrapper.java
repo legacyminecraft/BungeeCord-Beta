@@ -1,4 +1,4 @@
-package com.legacyminecraft.bungeeposeidon.api;
+package com.legacyminecraft.bungeeposeidon.api.util;
 
 import com.google.common.base.Preconditions;
 

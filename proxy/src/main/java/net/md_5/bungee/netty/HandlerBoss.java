@@ -1,15 +1,19 @@
 package net.md_5.bungee.netty;
 
 import com.google.common.base.Preconditions;
+import com.legacyminecraft.bungeeposeidon.ping.ServerListPingHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.ReadTimeoutException;
+import lombok.Getter;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.config.ListenerInfo;
 import net.md_5.bungee.connection.CancelSendSignal;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.protocol.BadPacketException;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.logging.Level;
 
 /**
@@ -20,11 +24,22 @@ import java.util.logging.Level;
 public class HandlerBoss extends ChannelInboundHandlerAdapter {
 
     private ChannelWrapper channel;
+    @Getter
     private PacketHandler handler;
+    @Getter
+    private ServerListPingHandler pingHandler;
 
     public void setHandler(PacketHandler handler) {
         Preconditions.checkArgument(handler != null, "handler");
         this.handler = handler;
+    }
+
+    public ServerListPingHandler enablePingProtocol(InitialHandler initialHandler) {
+        ListenerInfo listener = initialHandler.getListener();
+        InetSocketAddress remoteAddress = (InetSocketAddress) this.channel.getHandle().remoteAddress();
+        ServerListPingHandler pingHandler = new ServerListPingHandler(listener, remoteAddress);
+        this.pingHandler = pingHandler;
+        return pingHandler;
     }
 
     @Override

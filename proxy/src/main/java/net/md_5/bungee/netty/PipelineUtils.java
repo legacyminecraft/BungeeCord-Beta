@@ -76,10 +76,11 @@ public class PipelineUtils {
                 // IP_TOS is not supported (Windows XP / Windows Server 2003)
             }
 
+            HandlerBoss handlerBoss = new HandlerBoss();
             ch.pipeline().addLast(TIMEOUT_HANDLER, new ReadTimeoutHandler(BungeeCord.getInstance().config.getTimeout(), TimeUnit.MILLISECONDS));
-            ch.pipeline().addLast(PACKET_DECODE_HANDLER, new PacketDecoder(Vanilla.getInstance()));
+            ch.pipeline().addLast(PACKET_DECODE_HANDLER, new PacketDecoder(Vanilla.getInstance(), handlerBoss));
             ch.pipeline().addLast(PACKET_ENCODE_HANDLER, packetEncoder);
-            ch.pipeline().addLast(BOSS_HANDLER, new HandlerBoss());
+            ch.pipeline().addLast(BOSS_HANDLER, handlerBoss);
         }
     }
 

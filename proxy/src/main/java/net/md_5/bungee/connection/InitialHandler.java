@@ -51,6 +51,7 @@ public class InitialHandler extends PacketHandler implements PendingConnection {
     private List<PacketFAPluginMessage> loginMessages = new ArrayList<>();
     @Getter
     private List<PacketFAPluginMessage> registerMessages = new ArrayList<>();
+    @Getter
     private State thisState = State.HANDSHAKE;
     private final Unsafe unsafe = new Unsafe() {
         @Override
@@ -62,7 +63,7 @@ public class InitialHandler extends PacketHandler implements PendingConnection {
     private boolean onlineMode = BungeeCord.getInstance().config.isOnlineMode();
     private String serverId;
 
-    private enum State {
+    public enum State {
         HANDSHAKE, LOGIN, FINISHED
     }
 

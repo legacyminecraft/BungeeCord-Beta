@@ -1,0 +1,32 @@
+package com.legacyminecraft.bungeeposeidon.api.profile;
+
+import org.jspecify.annotations.Nullable;
+
+import java.util.UUID;
+
+/**
+ * Represents a player profile, including the player's UUID and name.
+ */
+public interface PlayerProfile {
+
+    /**
+     * Returns the player's name, if set
+     *
+     * @return the player's name, if set
+     */
+    @Nullable String getName();
+
+    /**
+     * Returns the player's UUID
+     *
+     * @return the player's UUID
+     */
+    UUID getUniqueId();
+
+    /**
+     * Returns if the profile is an online profile
+     *
+     * @return {@code true} if it is an online profile
+     */
+    boolean isOnlineProfile();
+}
